@@ -99,7 +99,7 @@ noclipToggle.Text = "Выкл"
 local function toggleNoclip()
     if noclipToggle.Text == "Выкл" then
         noclipToggle.Text = "Вкл"
-                noclipToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+        noclipToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
     else
         noclipToggle.Text = "Выкл"
         noclipToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
@@ -180,15 +180,36 @@ end
 
 flyToggle.MouseButton1Click:Connect(toggleFly)
 
+local function setupCharacter()
+    character = player.Character or player.CharacterAdded:Wait()
+    humanoid = character:WaitForChild("Humanoid")
+
+    bodyGyro = Instance.new("BodyGyro")
+    bodyGyro.P = 9e4
+    bodyGyro.maxTorque = Vector3.new(9e4, 9e4, 9e4)
+
+    bodyVelocity = Instance.new("BodyVelocity")
+    bodyVelocity.maxForce = Vector3.new(9e4, 9e4, 9e4)
+end
+
+player.CharacterAdded:Connect(function()
+    setupCharacter()
+    if flying then
+        toggleFly() -- Отключить полет при смерти
+    end
+end)
+
+setupCharacter()
+
 local function spinner()
-    local SPIN_FORCE = 5000
+    local SPIN_FORCE = 5000 -- Измените на необходимую силу вращения
 
     local function onHit(hitPart)
         local targetHumanoid = hitPart.Parent:FindFirstChildOfClass("Humanoid")
         if targetHumanoid then
             local pushDirection = (hitPart.Position - character.PrimaryPart.Position).unit
             targetHumanoid:ChangeState(Enum.HumanoidStateType.Physics)
-            targetHumanoid:TakeDamage(10)
+            targetHumanoid:TakeDamage(10) -- При желании, измените значение на нужное
             targetHumanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, true)
             targetHumanoid:Move(Vector3.new(pushDirection.X, 0, pushDirection.Z) * SPIN_FORCE)
         end
@@ -218,10 +239,10 @@ local function spinner()
     startSpinner()
 
     game:GetService("RunService").Stepped:Connect(function()
-        character.HumanoidRootPart.CFrame *= CFrame.Angles(0, math.rad(10), 0)
+        character.HumanoidRootPart.CFrame *= CFrame.Angles(0, math.rad(10), 0) -- Измените значение math.rad(10) на нужный угол вращения
     end)
 
-    wait(5)
+    wait(5) -- Измените значение на необходимое время действия спиннера
 
     stopSpinner()
 end
@@ -248,7 +269,7 @@ end
 game:GetService("StarterGui"):SetCore("SendNotification", { 
     Title = "New Menu",
     Text = "By Nicholas",
-    Icon = "", 
+    Icon = "", -- Replace with actual icon ID
     Duration = 5
 })
 
@@ -267,11 +288,8 @@ end
 player.CharacterAdded:Connect(function()
     setupCharacter()
     if flying then
-        toggleFly()
+        toggleFly() -- Отключить полет при смерти
     end
 end)
 
 setupCharacter()
-``
-
-            
