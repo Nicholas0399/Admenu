@@ -7,21 +7,31 @@ main.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 main.ResetOnSpawn = false
 
 Frame.Parent = main
-Frame.Size = UDim2.new(0, 190, 0, 200)
-Frame.Position = UDim2.new(0.1, 0, 0.379, 0)
-Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-Frame.BorderSizePixel = 0
+Frame.Size = UDim2.new(0, 200, 0, 300)
+Frame.Position = UDim2.new(0.1, 0, 0.35, 0)
+Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Frame.BorderSizePixel = 5
+Frame.BorderColor3 = Color3.fromRGB(125, 0, 255)
 Frame.Active = true
-Frame.Draggable = true
+Frame.ClipsDescendants = true
+Frame.ZIndex = 2
+Frame.ClipsDescendants = true
+Frame.BackgroundTransparency = 0.5
+Frame.BackgroundBlur = true
+Frame.Visible = true
+Frame.CornerRadius = UDim.new(0, 10)
 
 title.Parent = Frame
-title.Size = UDim2.new(0, 150, 0, 30)
-title.Position = UDim2.new(0.1, 0, 0, 0)
-title.BackgroundTransparency = 1
+title.Size = UDim2.new(1, 0, 0, 40)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.BackgroundColor3 = Color3.fromRGB(125, 0, 255)
+title.BackgroundTransparency = 0.5
+title.BorderSizePixel = 0
 title.Font = Enum.Font.GothamBold
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.TextSize = 24
+title.TextSize = 20
 title.Text = "Nicholas"
+title.TextScaled = true
 
 local nowe = false
 
@@ -41,19 +51,24 @@ local function createButton(name, text, position, onClick)
     local button = Instance.new("TextButton")
     button.Name = name
     button.Parent = Frame
-    button.Size = UDim2.new(0, 150, 0, 40)
+    button.Size = UDim2.new(0, 180, 0, 40)
     button.Position = position
-    button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    button.BorderSizePixel = 0
+    button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    button.BorderSizePixel = 5
+    button.BorderColor3 = Color3.fromRGB(125, 0, 255)
     button.Font = Enum.Font.Gotham
-    button.TextColor3 = Color3.fromRGB(0, 0, 0)
-    button.TextSize = 20
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.TextSize = 16
     button.Text = text
+    button.TextScaled = true
+    button.AutoButtonColor = false
+    button.Modal = true
+    button.ClipsDescendants = true
     button.MouseEnter:Connect(function()
-        button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        button.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
     end)
     button.MouseLeave:Connect(function()
-        button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     end)
     if onClick then
         button.MouseButton1Click:Connect(onClick)
@@ -63,16 +78,15 @@ end
 
 local buttons = {
     {"flightButton", "Полёт", UDim2.new(0.1, 0, 0.1, 0), toggleFlight},
-    {"button2", "Button 2", UDim2.new(0.1, 0, 0.3, 0)},
-    {"button3", "Button 3", UDim2.new(0.1, 0, 0.5, 0)},
-    {"button4", "Button 4", UDim2.new(0.1, 0, 0.7, 0)},
-    {"button5", "Button 5", UDim2.new(0.1, 0, 0.9, 0)},
-    {"closeButton", "Close Script", UDim2.new(0.1, 0, 1, -90), function()
+    {"button2", "Button 2", UDim2.new(0.1, 0, 0.2, 0)},
+    {"button3", "Button 3", UDim2.new(0.1, 0, 0.3, 0)},
+    {"button4", "Button 4", UDim2.new(0.1, 0, 0.4, 0)},
+    {"button5", "Button 5", UDim2.new(0.1, 0, 0.5, 0)},
+    {"closeButton", "Закрыть", UDim2.new(0.1, 0, 0.9, 0), function()
         main:Destroy()
     end},
-    {"minimizeButton", "Minimize Script", UDim2.new(0.1, 0, 1, -45), function()
-        Frame.Size = UDim2.new(0, 190, 0, 40)
-        Frame.Position = UDim2.new(0.1, 0, 1, -40)
+    {"minimizeButton", "Свернуть", UDim2.new(0.1, 0, 0.8, 0), function()
+        Frame.Visible = not Frame.Visible
     end}
 }
 
