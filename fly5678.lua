@@ -1,11 +1,3 @@
--- Код создания огня в ReplicatedStorage
-local fireTemplate = Instance.new("Fire")
-fireTemplate.Size = 10
-fireTemplate.Heat = 0
-fireTemplate.Enabled = false
-fireTemplate.Parent = game:GetService("ReplicatedStorage") -- Поместить в ReplicatedStorage
-
--- Остальной код
 local main = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
 local title = Instance.new("TextLabel")
@@ -121,7 +113,6 @@ local function fly()
 end
 
 local flying = false
-local fireEnabled = false
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
@@ -132,6 +123,11 @@ bodyGyro.maxTorque = Vector3.new(9e4, 9e4, 9e4)
 
 local bodyVelocity = Instance.new("BodyVelocity")
 bodyVelocity.maxForce = Vector3.new(9e4, 9e4, 9e4)
+
+local fireEffect = Instance.new("Fire")
+fireEffect.Size = 10
+fireEffect.Heat = 0
+fireEffect.Enabled = false
 
 local flyToggle = Instance.new("TextButton")
 flyToggle.Parent = flyMenu
@@ -145,13 +141,13 @@ flyToggle.Text = "Вкл/Выкл Полет"
 
 local function toggleFly()
     flying = not flying
-        if flying then
+    if flying then
         flyToggle.Text = "Выкл Полет"
         flyToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
         bodyGyro.Parent = character.PrimaryPart
         bodyVelocity.Parent = character.PrimaryPart
-        fireEffect.Enabled = fireEnabled
-        while flying do
+        fireEffect.Parent = character
+                while flying do
             local moveDirection = humanoid.MoveDirection
             bodyGyro.cframe = workspace.CurrentCamera.CoordinateFrame
             local speed = tonumber(speedBox.Text) or 50
@@ -180,7 +176,7 @@ local function toggleFly()
         flyToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
         bodyGyro.Parent = nil
         bodyVelocity.Parent = nil
-        fireEffect.Enabled = false
+        fireEffect.Parent = nil
         for _, v in pairs(character:GetDescendants()) do
             if v:IsA("BasePart") then
                 v.CanCollide = true
@@ -190,27 +186,6 @@ local function toggleFly()
 end
 
 flyToggle.MouseButton1Click:Connect(toggleFly)
-
-local fireToggle = Instance.new("TextButton")
-fireToggle.Parent = flyMenu
-fireToggle.Size = UDim2.new(0, 180, 0, 30)
-fireToggle.Position = UDim2.new(0.1, 0, 0, 210)
-fireToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-fireToggle.Font = Enum.Font.Gotham
-fireToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-fireToggle.TextSize = 18
-fireToggle.Text = "Вкл/Выкл Огонь"
-
-local function toggleFire()
-    fireEnabled = not fireEnabled
-    fireToggle.Text = fireEnabled and "Выкл Огонь" or "Вкл Огонь"
-    fireToggle.BackgroundColor3 = fireEnabled and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
-    if flying then
-        fireEffect.Enabled = fireEnabled
-    end
-end
-
-fireToggle.MouseButton1Click:Connect(toggleFire)
 
 local buttons = {
     {"flyButton", "Полет", UDim2.new(0.1, 0, 0.1, 0), fly},
@@ -248,15 +223,7 @@ local function setupCharacter()
 
     bodyVelocity = Instance.new("BodyVelocity")
     bodyVelocity.maxForce = Vector3.new(9e4, 9e4, 9e4)
-
-    fireEffect.Parent = character.PrimaryPart
 end
 
-player.CharacterAdded:Connect(function()
-    setupCharacter()
-    if flying then
-        toggleFly() -- Отключить полет при смерти
-    end
-end)
-
+player.CharacterAdded:Connect(setupCharacter)
 setupCharacter()
