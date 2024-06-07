@@ -99,7 +99,7 @@ noclipToggle.Text = "Выкл"
 local function toggleNoclip()
     if noclipToggle.Text == "Выкл" then
         noclipToggle.Text = "Вкл"
-        noclipToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+                noclipToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
     else
         noclipToggle.Text = "Выкл"
         noclipToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
@@ -112,44 +112,8 @@ local function fly()
     flyMenu.Visible = not flyMenu.Visible
 end
 
-local function spinner()
-    local debounce = false
-    local function onTouched(hit)
-        if not debounce and hit.Parent then
-            debounce = true
-            local humanoid = hit.Parent:FindFirstChildOfClass("Humanoid")
-            if humanoid then
-                local direction = hit.Position - character.PrimaryPart.Position
-                humanoid:TakeDamage(50)
-                humanoid.Sit = true
-                humanoid.PlatformStand = true
-                humanoid:ChangeState(Enum.HumanoidStateType.Physics)
-                wait(0.5)
-                humanoid.PlatformStand = false
-                humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
-                local bodyVelocity = Instance.new("BodyVelocity")
-                bodyVelocity.MaxForce = Vector3.new(100000, 100000, 100000)
-                bodyVelocity.Velocity = direction.Unit * 100
-                bodyVelocity.Parent = humanoid.Parent:FindFirstChild("HumanoidRootPart")
-                wait(0.1)
-                bodyVelocity:Destroy()
-                debounce = false
-            end
-        end
-    end
-
-    local touchPart = Instance.new("Part")
-    touchPart.Size = Vector3.new(10, 2, 10)
-    touchPart.Anchored = true
-    touchPart.CanCollide = false
-    touchPart.Touched:Connect(onTouched)
-    touchPart.Parent = workspace
-end
-
-buttons[2][4] = spinner -- Добавляем функцию spinner к второй кнопке в меню
-
 local flying = false
-local player  = game.Players.LocalPlayer
+local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 
@@ -216,6 +180,52 @@ end
 
 flyToggle.MouseButton1Click:Connect(toggleFly)
 
+local function spinner()
+    local SPIN_FORCE = 5000
+
+    local function onHit(hitPart)
+        local targetHumanoid = hitPart.Parent:FindFirstChildOfClass("Humanoid")
+        if targetHumanoid then
+            local pushDirection = (hitPart.Position - character.PrimaryPart.Position).unit
+            targetHumanoid:ChangeState(Enum.HumanoidStateType.Physics)
+            targetHumanoid:TakeDamage(10)
+            targetHumanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, true)
+            targetHumanoid:Move(Vector3.new(pushDirection.X, 0, pushDirection.Z) * SPIN_FORCE)
+        end
+    end
+
+    local function onTouched(hit)
+        local hitPart = hit:GetPart()
+        if hitPart and hitPart.Parent then
+            onHit(hitPart)
+        end
+    end
+
+    local function onCollision(hit)
+        onHit(hit)
+    end
+
+    local function startSpinner()
+        character.HumanoidRootPart.Touched:Connect(onTouched)
+        character.HumanoidRootPart.Touched:Connect(onCollision)
+    end
+
+    local function stopSpinner()
+        character.HumanoidRootPart.Touched:Disconnect()
+        character.HumanoidRootPart.Touched:Disconnect()
+    end
+
+    startSpinner()
+
+    game:GetService("RunService").Stepped:Connect(function()
+        character.HumanoidRootPart.CFrame *= CFrame.Angles(0, math.rad(10), 0)
+    end)
+
+    wait(5)
+
+    stopSpinner()
+end
+
 local buttons = {
     {"flyButton", "Полет", UDim2.new(0.1, 0, 0.1, 0), fly},
     {"spinnerButton", "Спиннер", UDim2.new(0.1, 0, 0.3, 0), spinner},
@@ -238,7 +248,7 @@ end
 game:GetService("StarterGui"):SetCore("SendNotification", { 
     Title = "New Menu",
     Text = "By Nicholas",
-    Icon = "", -- Replace with actual icon ID
+    Icon = "", 
     Duration = 5
 })
 
@@ -257,9 +267,11 @@ end
 player.CharacterAdded:Connect(function()
     setupCharacter()
     if flying then
-        toggleFly() -- Отключить полет при смерти
+        toggleFly()
     end
 end)
 
 setupCharacter()
+``
 
+            
