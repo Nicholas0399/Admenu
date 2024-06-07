@@ -108,6 +108,38 @@ end
 
 noclipToggle.MouseButton1Click:Connect(toggleNoclip)
 
+local visualEffectLabel = Instance.new("TextLabel")
+visualEffectLabel.Parent = flyMenu
+visualEffectLabel.Size = UDim2.new(0, 180, 0, 30)
+visualEffectLabel.Position = UDim2.new(0.1, 0, 0, 170)
+visualEffectLabel.BackgroundTransparency = 1
+visualEffectLabel.Font = Enum.Font.Gotham
+visualEffectLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+visualEffectLabel.TextSize = 18
+visualEffectLabel.Text = "Визуальный эффект:"
+
+local visualEffectToggle = Instance.new("TextButton")
+visualEffectToggle.Parent = flyMenu
+visualEffectToggle.Size = UDim2.new(0, 180, 0, 30)
+visualEffectToggle.Position = UDim2.new(0.1, 0, 0, 210)
+visualEffectToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+visualEffectToggle.Font = Enum.Font.Gotham
+visualEffectToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+visualEffectToggle.TextSize = 18
+visualEffectToggle.Text = "Выкл"
+
+local function toggleVisualEffect()
+    if visualEffectToggle.Text == "Выкл" then
+        visualEffectToggle.Text = "Вкл"
+        visualEffectToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+    else
+        visualEffectToggle.Text = "Выкл"
+        visualEffectToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    end
+end
+
+visualEffectToggle.MouseButton1Click:Connect(toggleVisualEffect)
+
 local function fly()
     flyMenu.Visible = not flyMenu.Visible
 end
@@ -124,15 +156,30 @@ bodyGyro.maxTorque = Vector3.new(9e4, 9e4, 9e4)
 local bodyVelocity = Instance.new("BodyVelocity")
 bodyVelocity.maxForce = Vector3.new(9e4, 9e4, 9e4)
 
+local particleEmitter = Instance.new("ParticleEmitter")
+particleEmitter.Enabled = false
+particleEmitter.Texture = "rbxassetid://243660364" -- Замените на желаемый ID текстуры
+particleEmitter.Rate = 100
+particleEmitter.Speed = NumberRange.new(5, 10)
+particleEmitter.Parent = character.PrimaryPart
+
 local flyToggle = Instance.new("TextButton")
 flyToggle.Parent = flyMenu
 flyToggle.Size = UDim2.new(0, 180, 0, 30)
-flyToggle.Position = UDim2.new(0.1, 0, 0, 170)
+flyToggle.Position = UDim2.new(0.1, 0, 0, 250)
 flyToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 flyToggle.Font = Enum.Font.Gotham
 flyToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 flyToggle.TextSize = 18
 flyToggle.Text = "Вкл/Выкл Полет"
+
+local flying = false
+local particleEmitter = Instance.new("ParticleEmitter")
+particleEmitter.Enabled = false
+particleEmitter.Texture = "rbxassetid://243660364" -- Замените на желаемый ID текстуры
+particleEmitter.Rate = 100
+particleEmitter.Speed = NumberRange.new(5, 10)
+particleEmitter.Parent = nil -- Установим родителя в toggleFly функции
 
 local function toggleFly()
     flying = not flying
@@ -141,28 +188,13 @@ local function toggleFly()
         flyToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
         bodyGyro.Parent = character.PrimaryPart
         bodyVelocity.Parent = character.PrimaryPart
+        particleEmitter.Parent = character.PrimaryPart
+        particleEmitter.Enabled = visualEffectToggle.Text == "Вкл"
         while flying do
             local moveDirection = humanoid.MoveDirection
-            bodyGyro.cframe = workspace.CurrentCamera.CoordinateFrame
+            bodyGyro.CFrame = workspace.CurrentCamera.CoordinateFrame
             local speed = tonumber(speedBox.Text) or 50
-            if moveDirection.magnitude > 0 then
-                bodyVelocity.velocity = workspace.CurrentCamera.CFrame.LookVector * speed
-            else
-                bodyVelocity.velocity = Vector3.new(0, 0, 0)
-            end
-            if noclipToggle.Text == "Вкл" then
-                for _, v in pairs(character:GetDescendants()) do
-                    if v:IsA("BasePart") then
-                        v.CanCollide = false
-                    end
-                end
-            else
-                for _, v in pairs(character:GetDescendants()) do
-                    if v:IsA("BasePart") then
-                        v.CanCollide = true
-                    end
-                end
-            end
+            bodyVelocity.Velocity = moveDirection * speed
             wait()
         end
     else
@@ -170,15 +202,32 @@ local function toggleFly()
         flyToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
         bodyGyro.Parent = nil
         bodyVelocity.Parent = nil
-        for _, v in pairs(character:GetDescendants()) do
-            if v:IsA("BasePart") then
-                v.CanCollide = true
-            end
-        end
+        particleEmitter.Parent = nil
+        particleEmitter.Enabled = false
     end
 end
 
 flyToggle.MouseButton1Click:Connect(toggleFly)
+
+local function setupCharacter()
+    character = player.Character or player.CharacterAdded:Wait()
+    humanoid = character:WaitForChild("Humanoid")
+    bodyGyro = Instance.new("BodyGyro")
+    bodyGyro.P = 9e4
+    bodyGyro.maxTorque = Vector3.new(9e4, 9e4, 9e4)
+    bodyVelocity = Instance.new
+    bodyVelocity = Instance.new("BodyVelocity")
+    bodyVelocity.maxForce = Vector3.new(9e4, 9e4, 9e4)
+end
+
+player.CharacterAdded:Connect(function()
+    setupCharacter()
+    if flying then
+        toggleFly() -- Отключить полет при смерти
+    end
+end)
+
+setupCharacter()
 
 local buttons = {
     {"flyButton", "Полет", UDim2.new(0.1, 0, 0.1, 0), fly},
