@@ -1,9 +1,6 @@
--- Клиентский скрипт (LocalScript)
 local main = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
 local title = Instance.new("TextLabel")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local FireEvent = ReplicatedStorage:WaitForChild("FireEvent")
 
 main.Name = "main"
 main.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
@@ -48,10 +45,6 @@ local function createButton(name, text, position, onClick)
         button.MouseButton1Click:Connect(onClick)
     end
     return button
-end
-
-local function addFire()
-    FireEvent:FireServer()
 end
 
 local flyMenu = Instance.new("Frame")
@@ -103,15 +96,6 @@ noclipToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 noclipToggle.TextSize = 18
 noclipToggle.Text = "Выкл"
 
-local fireButton = createButton("fireButton", "Включить огонь", UDim2.new(0.1, 0, 0.8, 0), addFire)
-
-local flyButton = createButton("flyButton", "Полет", UDim2.new(0.1, 0, 0.1, 0), toggleFly)
-
-local flying = false
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
-
 local function toggleNoclip()
     if noclipToggle.Text == "Выкл" then
         noclipToggle.Text = "Вкл"
@@ -122,33 +106,82 @@ local function toggleNoclip()
     end
 end
 
+noclipToggle.MouseButton1Click:Connect(toggleNoclip)
+
 local function fly()
     flyMenu.Visible = not flyMenu.Visible
-    if flyMenu.Visible then
-        if flying then
-            local speed = tonumber(speedBox.Text) or 50
-            local moveDirection = humanoid.MoveDirection
-            humanoid.WalkSpeed = speed
-        end
-    else
-        humanoid.WalkSpeed = 16
-    end
 end
+
+local flying = false
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+local bodyGyro = Instance.new("BodyGyro")
+bodyGyro.P = 9e4
+bodyGyro.maxTorque = Vector3.new(9e4, 9e4, 9e4)
+
+local bodyVelocity = Instance.new("BodyVelocity")
+bodyVelocity.maxForce = Vector3.new(9e4, 9e4, 9e4)
+
+local flyToggle = Instance.new("TextButton")
+flyToggle.Parent = flyMenu
+flyToggle.Size = UDim2.new(0, 180, 0, 30)
+flyToggle.Position = UDim2.new(0.1, 0, 0, 170)
+flyToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+flyToggle.Font = Enum.Font.Gotham
+flyToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+flyToggle.TextSize = 18
+flyToggle.Text = "Вкл/Выкл Полет"
 
 local function toggleFly()
     flying = not flying
     if flying then
-        flyButton.Text = "Выкл Полет"
-        flyButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-        fly()
+        flyToggle.Text = "Выкл Полет"
+        flyToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+        bodyGyro.Parent = character.PrimaryPart
+        bodyVelocity.Parent = character.PrimaryPart
+        while flying do
+            local moveDirection = humanoid.MoveDirection
+            bodyGyro.cframe = workspace.CurrentCamera.CoordinateFrame
+            local speed = tonumber(speedBox.Text) or 50
+            if moveDirection.magnitude > 0 then
+                bodyVelocity.velocity = workspace.CurrentCamera.CFrame.LookVector * speed
+            else
+                bodyVelocity.velocity = Vector3.new(0, 0, 0)
+            end
+            if noclipToggle.Text == "Вкл" then
+                for _, v in pairs(character:GetDescendants()) do
+                    if v:IsA("BasePart") then
+                        v.CanCollide = false
+                    end
+                end
+            else
+                for _, v in pairs(character:GetDescendants()) do
+                    if v:IsA("BasePart") then
+                        v.CanCollide = true
+                    end
+                end
+            end
+            wait()
+        end
     else
-        flyButton.Text = "Вкл Полет"
-        flyButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-        fly()
+        flyToggle.Text = "Вкл Полет"
+        flyToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        bodyGyro.Parent = nil
+        bodyVelocity.Parent = nil
+        for _, v in pairs(character:GetDescendants()) do
+            if v:IsA("BasePart") then
+                v.CanCollide = true
+            end
+        end
     end
 end
 
+flyToggle.MouseButton1Click:Connect(toggleFly)
+
 local buttons = {
+    {"flyButton", "Полет", UDim2.new(0.1, 0, 0.1, 0), fly},
     {"button2", "Button 2", UDim2.new(0.1, 0, 0.3, 0)},
     {"button3", "Button 3", UDim2.new(0.1, 0, 0.5, 0)},
     {"button4", "Button 4", UDim2.new(0.1, 0, 0.7, 0)},
@@ -176,7 +209,20 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
 local function setupCharacter()
     character = player.Character or player.CharacterAdded:Wait()
     humanoid = character:WaitForChild("Humanoid")
+
+    bodyGyro = Instance.new("BodyGyro")
+    bodyGyro.P = 9e4
+    bodyGyro.maxTorque = Vector3.new(9e4, 9e4, 9e4)
+
+    bodyVelocity = Instance.new("BodyVelocity")
+    bodyVelocity.maxForce = Vector3.new(9e4, 9e4, 9e4)
 end
 
-player.CharacterAdded:Connect(setupCharacter)
+player.CharacterAdded:Connect(function()
+    setupCharacter()
+    if flying then
+        toggleFly() -- Отключить полет при смерти
+    end
+end)
+
 setupCharacter()
