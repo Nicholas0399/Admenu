@@ -1,18 +1,3 @@
--- Серверный скрипт (ServerScriptService)
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local FireEvent = Instance.new("RemoteEvent", ReplicatedStorage)
-FireEvent.Name = "FireEvent"
-
-FireEvent.OnServerEvent:Connect(function(player)
-    local character = player.Character
-    if character then
-        local fireEffect = Instance.new("Fire")
-        fireEffect.Parent = character.HumanoidRootPart
-        fireEffect.Size = 10
-        fireEffect.Heat = 0
-    end
-end)
-
 -- Клиентский скрипт (LocalScript)
 local main = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
