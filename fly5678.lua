@@ -79,7 +79,7 @@ speedBox.Text = "50"
 local noclipLabel = Instance.new("TextLabel")
 noclipLabel.Parent = flyMenu
 noclipLabel.Size = UDim2.new(0, 130, 0, 25)
-noclipLabel.Position = UDim2.new(0.1, 0, 0, 70)
+noclipLabel.Position = UDim2.new(0, 0, 0, 70)
 noclipLabel.BackgroundTransparency = 1
 noclipLabel.Font = Enum.Font.Gotham
 noclipLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -148,7 +148,7 @@ local function toggleFly()
                 bodyGyro.CFrame = newGyroCFrame
             end
             bodyVelocity.Velocity = character.PrimaryPart.CFrame.LookVector * (tonumber(speedBox.Text) or 50)
-            if toggleNoclip.Text == "Вкл" then
+            if noclipToggle.Text == "Вкл" then
                 character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
             else
                 character.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
@@ -188,7 +188,7 @@ pushStrengthLabel.Text = "Сила отталкивания:"
 local pushStrengthBox = Instance.new("TextBox")
 pushStrengthBox.Parent = pushMenu
 pushStrengthBox.Size = UDim2.new(0, 130, 0, 25)
-pushStrengthBox.Position = UDim2.new(0.1, 0, 0, 40)
+pushStrengthBox.Position = UDim2.new(0, 0, 0, 40)
 pushStrengthBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 pushStrengthBox.Font = Enum.Font.Gotham
 pushStrengthBox.TextColor3 = Color3.fromRGB(0, 0, 0)
@@ -212,12 +212,16 @@ end
 pushToggle.MouseButton1Click:Connect(togglePush)
 
 local function push()
-    -- Код для функции отталкивания
-end
-
-local function onTouched(hit)
-    if pushing then
-        -- Код для отталкивания
+    local pushStrength = tonumber(pushStrengthBox.Text) or 50
+    local players = game.Players:GetPlayers()
+    for _, player in ipairs(players) do
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local targetPosition = player.Character.HumanoidRootPart.Position
+            local pushDirection = (targetPosition - character.HumanoidRootPart.Position).unit
+            player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+            player.Character.Humanoid.PlatformStand = false
+            player.Character.Humanoid:Move(pushDirection * pushStrength)
+        end
     end
 end
 
@@ -241,3 +245,6 @@ local buttons = {
 for _, buttonInfo in ipairs(buttons) do
     createButton(buttonInfo[1], buttonInfo[2], buttonInfo[3], buttonInfo[4])
 end
+
+    
+    
