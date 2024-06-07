@@ -272,24 +272,3 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
     Icon = "", -- Replace with actual icon ID
     Duration = 5
 })
-
-local function setupCharacter()
-    character = player.Character or player.CharacterAdded:Wait()
-    humanoid = character:WaitForChild("Humanoid")
-
-    bodyGyro = Instance.new("BodyGyro")
-    bodyGyro.P = 9e4
-    bodyGyro.maxTorque = Vector3.new(9e4, 9e4, 9e4)
-
-    bodyVelocity = Instance.new("BodyVelocity")
-    bodyVelocity.maxForce = Vector3.new(9e4, 9e4, 9e4)
-end
-
-player.CharacterAdded:Connect(function()
-    setupCharacter()
-    if flying then
-        toggleFly() -- Отключить полет при смерти
-    end
-end)
-
-setupCharacter()
