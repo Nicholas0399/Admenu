@@ -96,21 +96,7 @@ noclipToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 noclipToggle.TextSize = 18
 noclipToggle.Text = "Выкл"
 
-local function toggleNoclip()
-    if noclipToggle.Text == "Выкл" then
-        noclipToggle.Text = "Вкл"
-        noclipToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-    else
-        noclipToggle.Text = "Выкл"
-        noclipToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-    end
-end
-
-noclipToggle.MouseButton1Click:Connect(toggleNoclip)
-
-local function fly()
-    flyMenu.Visible = not flyMenu.Visible
-end
+local flyButton = createButton("flyButton", "Полет", UDim2.new(0.1, 0, 0.1, 0), fly)
 
 local flying = false
 local player = game.Players.LocalPlayer
@@ -139,6 +125,25 @@ flyToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 flyToggle.TextSize = 18
 flyToggle.Text = "Вкл/Выкл Полет"
 
+local function toggleNoclip()
+    if noclipToggle.Text == "Выкл" then
+        noclipToggle.Text = "Вкл"
+        noclipToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+    else
+        noclipToggle.Text = "Выкл"
+        noclipToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    end
+end
+
+local function fly()
+    flyMenu.Visible = not flyMenu.Visible
+    if flyMenu.Visible then
+        fireEffect.Enabled = true
+    else
+        fireEffect.Enabled = false
+    end
+end
+
 local function toggleFly()
     flying = not flying
     if flying then
@@ -147,48 +152,20 @@ local function toggleFly()
         bodyGyro.Parent = character.PrimaryPart
         bodyVelocity.Parent = character.PrimaryPart
         fireEffect.Parent = character
-                while flying do
-            local moveDirection = humanoid.MoveDirection
-            bodyGyro.cframe = workspace.CurrentCamera.CoordinateFrame
-            local speed = tonumber(speedBox.Text) or 50
-            if moveDirection.magnitude > 0 then
-                bodyVelocity.velocity = workspace.CurrentCamera.CFrame.LookVector * speed
-            else
-                bodyVelocity.velocity = Vector3.new(0, 0, 0)
-            end
-            if noclipToggle.Text == "Вкл" then
-                for _, v in pairs(character:GetDescendants()) do
-                    if v:IsA("BasePart") then
-                        v.CanCollide = false
-                    end
-                end
-            else
-                for _, v in pairs(character:GetDescendants()) do
-                    if v:IsA("BasePart") then
-                        v.CanCollide = true
-                    end
-                end
-            end
-            wait()
-        end
     else
         flyToggle.Text = "Вкл Полет"
         flyToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
         bodyGyro.Parent = nil
         bodyVelocity.Parent = nil
         fireEffect.Parent = nil
-        for _, v in pairs(character:GetDescendants()) do
-            if v:IsA("BasePart") then
-                v.CanCollide = true
-            end
-        end
     end
 end
 
+noclipToggle.MouseButton1Click:Connect(toggleNoclip)
 flyToggle.MouseButton1Click:Connect(toggleFly)
+flyButton.MouseButton1Click:Connect(fly)
 
 local buttons = {
-    {"flyButton", "Полет", UDim2.new(0.1, 0, 0.1, 0), fly},
     {"button2", "Button 2", UDim2.new(0.1, 0, 0.3, 0)},
     {"button3", "Button 3", UDim2.new(0.1, 0, 0.5, 0)},
     {"button4", "Button 4", UDim2.new(0.1, 0, 0.7, 0)},
