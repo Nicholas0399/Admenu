@@ -1,3 +1,11 @@
+-- Код создания огня в ReplicatedStorage
+local fireTemplate = Instance.new("Fire")
+fireTemplate.Size = 10
+fireTemplate.Heat = 0
+fireTemplate.Enabled = false
+fireTemplate.Parent = game:GetService("ReplicatedStorage") -- Поместить в ReplicatedStorage
+
+-- Остальной код
 local main = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
 local title = Instance.new("TextLabel")
@@ -61,7 +69,6 @@ speedLabel.Parent = flyMenu
 speedLabel.Size = UDim2.new(0, 180, 0, 30)
 speedLabel.Position = UDim2.new(0.1, 0, 0, 10)
 speedLabel.BackgroundTransparency = 1
-Transparency = 1
 speedLabel.Font = Enum.Font.Gotham
 speedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 speedLabel.TextSize = 18
@@ -136,15 +143,9 @@ flyToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 flyToggle.TextSize = 18
 flyToggle.Text = "Вкл/Выкл Полет"
 
-local fireEffect = Instance.new("Fire")
-fireEffect.Size = 10
-fireEffect.Heat = 0
-fireEffect.Enabled = false
-fireEffect.Parent = character.PrimaryPart
-
 local function toggleFly()
     flying = not flying
-    if flying then
+        if flying then
         flyToggle.Text = "Выкл Полет"
         flyToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
         bodyGyro.Parent = character.PrimaryPart
