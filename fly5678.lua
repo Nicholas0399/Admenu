@@ -143,7 +143,6 @@ local function toggleFly()
         bodyVelocity.Parent = character.PrimaryPart
         while flying do
             local moveDirection = humanoid.MoveDirection
-            local moveDirection = humanoid.MoveDirection
             if moveDirection ~= Vector3.new(0, 0, 0) then
                 local newGyroCFrame = CFrame.new(Vector3.new(), moveDirection)
                 bodyGyro.CFrame = newGyroCFrame
@@ -167,9 +166,66 @@ end
 
 flyToggle.MouseButton1Click:Connect(toggleFly)
 
+local pushMenu = Instance.new("Frame")
+pushMenu.Parent = main
+pushMenu.Size = UDim2.new(0, 150, 0, 200)
+pushMenu.Position = UDim2.new(0.3, 0, 0.3, 0)
+pushMenu.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+pushMenu.Visible = false
+pushMenu.Active = true
+pushMenu.Draggable = true
+
+local pushStrengthLabel = Instance.new("TextLabel")
+pushStrengthLabel.Parent = pushMenu
+pushStrengthLabel.Size = UDim2.new(0, 130, 0, 25)
+pushStrengthLabel.Position = UDim2.new(0.1, 0, 0, 10)
+pushStrengthLabel.BackgroundTransparency = 1
+pushStrengthLabel.Font = Enum.Font.Gotham
+pushStrengthLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+pushStrengthLabel.TextSize = 14
+pushStrengthLabel.Text = "Сила отталкивания:"
+
+local pushStrengthBox = Instance.new("TextBox")
+pushStrengthBox.Parent = pushMenu
+pushStrengthBox.Size = UDim2.new(0, 130, 0, 25)
+pushStrengthBox.Position = UDim2.new(0.1, 0, 0, 40)
+pushStrengthBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+pushStrengthBox.Font = Enum.Font.Gotham
+pushStrengthBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+pushStrengthBox.TextSize = 14
+pushStrengthBox.Text = "50"
+
+local pushToggle = Instance.new("TextButton")
+pushToggle.Parent = pushMenu
+pushToggle.Size = UDim2.new(0, 130, 0, 25)
+pushToggle.Position = UDim2.new(0.1, 0, 0, 70)
+pushToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+pushToggle.Font = Enum.Font.Gotham
+pushToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+pushToggle.TextSize = 14
+pushToggle.Text = "Вкл/Выкл Отталкивание"
+
+local function togglePush()
+    pushMenu.Visible = not pushMenu.Visible
+end
+
+pushToggle.MouseButton1Click:Connect(togglePush)
+
+local function push()
+    -- Код для функции отталкивания
+end
+
+local function onTouched(hit)
+    if pushing then
+        -- Код для отталкивания
+    end
+end
+
+pushToggle.MouseButton1Click:Connect(togglePush)
+
 local buttons = {
     {"flyButton", "Полет", UDim2.new(0.1, 0, 0.1, 0), fly},
-    {"spinnerButton", "Спиннер", UDim2.new(0.1, 0, 0.3, 0)},
+    {"pushButton", "Отталкивание", UDim2.new(0.1, 0, 0.3, 0), push},
     {"button3", "Button 3", UDim2.new(0.1, 0, 0.5, 0)},
     {"button4", "Button 4", UDim2.new(0.1, 0, 0.7, 0)},
     {"button5", "Button 5", UDim2.new(0.1, 0, 0.9, 0)},
@@ -185,12 +241,3 @@ local buttons = {
 for _, buttonInfo in ipairs(buttons) do
     createButton(buttonInfo[1], buttonInfo[2], buttonInfo[3], buttonInfo[4])
 end
-
-game:GetService("StarterGui"):SetCore("SendNotification", { 
-    Title = "New Menu",
-    Text = "By Nicholas",
-    Icon = "", -- Замените на фактический идентификатор иконки
-    Duration = 5
-})
-
-            
