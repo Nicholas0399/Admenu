@@ -7,68 +7,39 @@ main.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 main.ResetOnSpawn = false
 
 Frame.Parent = main
-Frame.Size = UDim2.new(0, 200, 0, 300)
-Frame.Position = UDim2.new(0.1, 0, 0.35, 0)
-Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Frame.BorderSizePixel = 5
-Frame.BorderColor3 = Color3.fromRGB(125, 0, 255)
+Frame.Size = UDim2.new(0, 190, 0, 200)
+Frame.Position = UDim2.new(0.1, 0, 0.379, 0)
+Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Frame.BorderSizePixel = 0
 Frame.Active = true
-Frame.ClipsDescendants = true
-Frame.ZIndex = 2
-Frame.ClipsDescendants = true
-Frame.BackgroundTransparency = 0.5
-Frame.BackgroundBlur = true
-Frame.Visible = true
-Frame.CornerRadius = UDim.new(0, 10)
+Frame.Draggable = true
 
 title.Parent = Frame
-title.Size = UDim2.new(1, 0, 0, 40)
-title.Position = UDim2.new(0, 0, 0, 0)
-title.BackgroundColor3 = Color3.fromRGB(125, 0, 255)
-title.BackgroundTransparency = 0.5
-title.BorderSizePixel = 0
+title.Size = UDim2.new(0, 150, 0, 30)
+title.Position = UDim2.new(0.1, 0, 0, 0)
+title.BackgroundTransparency = 1
 title.Font = Enum.Font.GothamBold
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.TextSize = 20
+title.TextSize = 24
 title.Text = "Nicholas"
-title.TextScaled = true
-
-local nowe = false
-
-local function toggleFlight()
-    nowe = not nowe
-
-    if nowe then
-        game.Players.LocalPlayer.Character.Humanoid.PlatformStand = true
-        game.Players.LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
-    else
-        game.Players.LocalPlayer.Character.Humanoid.PlatformStand = false
-        game.Players.LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
-    end
-end
 
 local function createButton(name, text, position, onClick)
     local button = Instance.new("TextButton")
     button.Name = name
     button.Parent = Frame
-    button.Size = UDim2.new(0, 180, 0, 40)
+    button.Size = UDim2.new(0, 150, 0, 40)
     button.Position = position
-    button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    button.BorderSizePixel = 5
-    button.BorderColor3 = Color3.fromRGB(125, 0, 255)
+    button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    button.BorderSizePixel = 0
     button.Font = Enum.Font.Gotham
-    button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    button.TextSize = 16
+    button.TextColor3 = Color3.fromRGB(0, 0, 0)
+    button.TextSize = 20
     button.Text = text
-    button.TextScaled = true
-    button.AutoButtonColor = false
-    button.Modal = true
-    button.ClipsDescendants = true
     button.MouseEnter:Connect(function()
-        button.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+        button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     end)
     button.MouseLeave:Connect(function()
-        button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     end)
     if onClick then
         button.MouseButton1Click:Connect(onClick)
@@ -76,17 +47,45 @@ local function createButton(name, text, position, onClick)
     return button
 end
 
+local flying = false
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local bodyGyro = Instance.new("BodyGyro", character.PrimaryPart)
+bodyGyro.P = 9e4
+bodyGyro.maxTorque = Vector3.new(9e4, 9e4, 9e4)
+bodyGyro.cframe = character.PrimaryPart.CFrame
+local bodyVelocity = Instance.new("BodyVelocity", character.PrimaryPart)
+bodyVelocity.velocity = Vector3.new(0, 0, 0)
+bodyVelocity.maxForce = Vector3.new(9e4, 9e4, 9e4)
+
+local function fly()
+    flying = not flying
+    if flying then
+        while flying do
+            local moveDirection = humanoid.MoveDirection
+            bodyGyro.cframe = workspace.CurrentCamera.CoordinateFrame
+            bodyVelocity.velocity = (workspace.CurrentCamera.CoordinateFrame.lookVector * 50) + Vector3.new(0, 0, 0)
+            wait()
+        end
+    else
+        bodyGyro:Destroy()
+        bodyVelocity:Destroy()
+    end
+end
+
 local buttons = {
-    {"flightButton", "Полёт", UDim2.new(0.1, 0, 0.1, 0), toggleFlight},
-    {"button2", "Button 2", UDim2.new(0.1, 0, 0.2, 0)},
-    {"button3", "Button 3", UDim2.new(0.1, 0, 0.3, 0)},
-    {"button4", "Button 4", UDim2.new(0.1, 0, 0.4, 0)},
-    {"button5", "Button 5", UDim2.new(0.1, 0, 0.5, 0)},
-    {"closeButton", "Закрыть", UDim2.new(0.1, 0, 0.9, 0), function()
+    {"flyButton", "Полет", UDim2.new(0.1, 0, 0.1, 0), fly},
+    {"button2", "Button 2", UDim2.new(0.1, 0, 0.3, 0)},
+    {"button3", "Button 3", UDim2.new(0.1, 0, 0.5, 0)},
+    {"button4", "Button 4", UDim2.new(0.1, 0, 0.7, 0)},
+    {"button5", "Button 5", UDim2.new(0.1, 0, 0.9, 0)},
+    {"closeButton", "Close Script", UDim2.new(0.1, 0, 1, -90), function()
         main:Destroy()
     end},
-    {"minimizeButton", "Свернуть", UDim2.new(0.1, 0, 0.8, 0), function()
-        Frame.Visible = not Frame.Visible
+    {"minimizeButton", "Minimize Script", UDim2.new(0.1, 0, 1, -45), function()
+        Frame.Size = UDim2.new(0, 190, 0, 40)
+        Frame.Position = UDim2.new(0.1, 0, 1, -40)
     end}
 }
 
@@ -100,5 +99,3 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
     Icon = "", -- Replace with actual icon ID
     Duration = 5
 })
-
-main.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
