@@ -48,6 +48,8 @@ local function createButton(name, text, position, onClick)
 end
 
 local flying = false
+local flightSpeed = 50
+local canFlyThroughWalls = false
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
@@ -64,11 +66,18 @@ local function fly()
     if flying then
         bodyGyro.Parent = character.PrimaryPart
         bodyVelocity.Parent = character.PrimaryPart
+        if canFlyThroughWalls then
+            for _, part in pairs(character:GetChildren()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = false
+                end
+            end
+        end
         while flying do
             local moveDirection = humanoid.MoveDirection
             bodyGyro.cframe = workspace.CurrentCamera.CoordinateFrame
             if moveDirection.magnitude > 0 then
-                bodyVelocity.velocity = workspace.CurrentCamera.CFrame.LookVector * 50
+                bodyVelocity.velocity = workspace.CurrentCamera.CFrame.LookVector * flightSpeed
             else
                 bodyVelocity.velocity = Vector3.new(0, 0, 0)
             end
@@ -77,15 +86,82 @@ local function fly()
     else
         bodyGyro.Parent = nil
         bodyVelocity.Parent = nil
+        for _, part in pairs(character:GetChildren()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true
+            end
+        end
     end
 end
 
+local function showFlightSettings()
+    local settingsFrame = Instance.new("Frame")
+    settingsFrame.Parent = main
+    settingsFrame.Size = UDim2.new(0, 200, 0, 150)
+    settingsFrame.Position = UDim2.new(0.1, 0, 0.6, 0)
+    settingsFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    settingsFrame.BorderSizePixel = 0
+
+    local speedLabel = Instance.new("TextLabel")
+    speedLabel.Parent = settingsFrame
+    speedLabel.Size = UDim2.new(0, 180, 0, 30)
+    speedLabel.Position = UDim2.new(0.1, 0, 0.1, 0)
+    speedLabel.BackgroundTransparency = 1
+    speedLabel.Font = Enum.Font.Gotham
+    speedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    speedLabel.TextSize = 18
+    speedLabel.Text = "Flight Speed: " .. flightSpeed
+
+    local speedSlider = Instance.new("TextBox")
+    speedSlider.Parent = settingsFrame
+    speedSlider.Size = UDim2.new(0, 180, 0, 30)
+    speedSlider.Position = UDim2.new(0.1, 0, 0.3, 0)
+    speedSlider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    speedSlider.BorderSizePixel = 0
+    speedSlider.Font = Enum.Font.Gotham
+    speedSlider.TextColor3 = Color3.fromRGB(0, 0, 0)
+    speedSlider.TextSize = 18
+    speedSlider.Text = tostring(flightSpeed)
+    speedSlider.FocusLost:Connect(function(enterPressed)
+        if enterPressed then
+            local newSpeed = tonumber(speedSlider.Text)
+            if newSpeed then
+                flightSpeed = newSpeed
+                speedLabel.Text = "Flight Speed: " .. flightSpeed
+            end
+        end
+    end)
+
+    local flyThroughWallsLabel = Instance.new("TextLabel")
+    flyThroughWallsLabel.Parent = settingsFrame
+    flyThroughWallsLabel.Size = UDim2.new(0, 180, 0, 30)
+    flyThroughWallsLabel.Position = UDim2.new(0.1, 0, 0.5, 0)
+    flyThroughWallsLabel.BackgroundTransparency = 1
+    flyThroughWallsLabel.Font = Enum.Font.Gotham
+    flyThroughWallsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    flyThroughWallsLabel.TextSize = 18
+    flyThroughWallsLabel.Text = "Fly Through Walls: " .. (canFlyThroughWalls and "On" or "Off")
+
+    local flyThroughWallsButton = createButton("flyThroughWallsButton", "Toggle", UDim2.new(0.1, 0, 0.7, 0), function()
+        canFlyThroughWalls = not canFlyThroughWalls
+        flyThroughWallsLabel.Text = "Fly Through Walls: " .. (canFlyThroughWalls and "On" or "Off")
+    end)
+    flyThroughWallsButton.Parent = settingsFrame
+    flyThroughWallsButton.Size = UDim2.new(0, 180, 0, 30)
+
+    local closeButton = createButton("closeSettingsButton", "Close", UDim2.new(0.1, 0, 0.9, 0), function()
+        settingsFrame:Destroy()
+    end)
+    closeButton.Parent = settingsFrame
+    closeButton.Size = UDim2.new(0, 180, 0, 30)
+end
+
 local buttons = {
-    {"flyButton", "Полет", UDim2.new(0.1, 0, 0.1, 0), fly},
-    {"button2", "Button 2", UDim2.new(0.1, 0, 0.3, 0)},
-    {"button3", "Button 3", UDim2.new(0.1, 0, 0.5, 0)},
-    {"button4", "Button 4", UDim2.new(0.1, 0, 0.7, 0)},
-    {"button5", "Button 5", UDim2.new(0.1, 0, 0.9, 0)},
+    {"flySettingsButton", "Настройки полета", UDim2.new(0.1, 0, 0.1, 0), showFlightSettings},
+    {"flyButton", "Полет", UDim2.new(0.1, 0, 0.3, 0), fly},
+    {"button2", "Button 2", UDim2.new(0.1, 0, 0.5, 0)},
+    {"button3", "Button 3", UDim2.new(0.1, 0, 0.7, 0)},
+    {"button4", "Button 4", UDim2.new(0.1, 0, 0.9, 0)},
     {"closeButton", "Close Script", UDim2.new(0.1, 0, 1, -90), function()
         main:Destroy()
     end},
