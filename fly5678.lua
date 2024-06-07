@@ -51,26 +51,32 @@ local flying = false
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
-local bodyGyro = Instance.new("BodyGyro", character.PrimaryPart)
+
+local bodyGyro = Instance.new("BodyGyro")
 bodyGyro.P = 9e4
 bodyGyro.maxTorque = Vector3.new(9e4, 9e4, 9e4)
-bodyGyro.cframe = character.PrimaryPart.CFrame
-local bodyVelocity = Instance.new("BodyVelocity", character.PrimaryPart)
-bodyVelocity.velocity = Vector3.new(0, 0, 0)
+
+local bodyVelocity = Instance.new("BodyVelocity")
 bodyVelocity.maxForce = Vector3.new(9e4, 9e4, 9e4)
 
 local function fly()
     flying = not flying
     if flying then
+        bodyGyro.Parent = character.PrimaryPart
+        bodyVelocity.Parent = character.PrimaryPart
         while flying do
             local moveDirection = humanoid.MoveDirection
             bodyGyro.cframe = workspace.CurrentCamera.CoordinateFrame
-            bodyVelocity.velocity = (workspace.CurrentCamera.CoordinateFrame.lookVector * 50) + Vector3.new(0, 0, 0)
+            if moveDirection.magnitude > 0 then
+                bodyVelocity.velocity = workspace.CurrentCamera.CFrame.LookVector * 50
+            else
+                bodyVelocity.velocity = Vector3.new(0, 0, 0)
+            end
             wait()
         end
     else
-        bodyGyro:Destroy()
-        bodyVelocity:Destroy()
+        bodyGyro.Parent = nil
+        bodyVelocity.Parent = nil
     end
 end
 
