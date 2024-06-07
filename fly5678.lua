@@ -55,19 +55,24 @@ title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.TextSize = 24
 title.Text = "FLY GUI V3"
 
-local function onButtonClicked()
-    -- Обработка нажатий
-end
+local nowe = false
 
-up.MouseButton1Click:Connect(onButtonClicked)
-down.MouseButton1Click:Connect(onButtonClicked)
-onof.MouseButton1Click:Connect(onButtonClicked)
-plus.MouseButton1Click:Connect(onButtonClicked)
-mine.MouseButton1Click:Connect(onButtonClicked)
+onof.MouseButton1Click:Connect(function()
+    local flyEnabled = not nowe
+    nowe = flyEnabled
+
+    if flyEnabled then
+        game.Players.LocalPlayer.Character.Humanoid.PlatformStand = true
+        game.Players.LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+    else
+        game.Players.LocalPlayer.Character.Humanoid.PlatformStand = false
+        game.Players.LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+    end
+end)
 
 game:GetService("StarterGui"):SetCore("SendNotification", { 
     Title = "FLY GUI V3",
     Text = "BY XNEO",
-    Icon = "rbxassetid://123456789", -- Замените на реальный ID иконки
+    Icon = "rbxassetid://123456789", -- Replace with actual icon ID
     Duration = 5
 })
