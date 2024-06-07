@@ -7,7 +7,7 @@ main.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 main.ResetOnSpawn = false
 
 Frame.Parent = main
-Frame.Size = UDim2.new(0, 150, 0, 150)
+Frame.Size = UDim2.new(0, 140, 0, 200)
 Frame.Position = UDim2.new(0.1, 0, 0.379, 0)
 Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 Frame.BorderSizePixel = 0
@@ -279,7 +279,9 @@ local function toggleSpinner()
         spinToggle.Text = "Вкл Спиннер"
         spinToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
     else
-        spinMenu.Visible = not spinMenu.Visible
+        startSpinner()
+        spinToggle.Text = "Выкл Спиннер"
+        spinToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
     end
 end
 
@@ -337,7 +339,7 @@ local buttons = {
         main:Destroy()
     end},
     {"minimizeButton", "Minimize Script", UDim2.new(0.1, 0, 1, -45), function()
-        Frame.Size = UDim2.new(0, 150, 0, 40)
+        Frame.Size = UDim2.new(0, 140, 0, 40)
         Frame.Position = UDim2.new(0.1, 0, 1, -40)
     end}
 }
@@ -349,7 +351,6 @@ end
 game:GetService("StarterGui"):SetCore("SendNotification", { 
     Title = "New Menu",
     Text = "By Nicholas",
-    Icon = "", -- Replace with actual icon ID
+    Icon = "", -- Замените на фактический идентификатор иконки
     Duration = 5
 })
-
