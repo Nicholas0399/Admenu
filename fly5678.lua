@@ -60,7 +60,8 @@ local speedLabel = Instance.new("TextLabel")
 speedLabel.Parent = flyMenu
 speedLabel.Size = UDim2.new(0, 180, 0, 30)
 speedLabel.Position = UDim2.new(0.1, 0, 0, 10)
-speedLabel.BackgroundTransparency = 1
+speedLabel.Background
+Transparency = 1
 speedLabel.Font = Enum.Font.Gotham
 speedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 speedLabel.TextSize = 18
@@ -135,12 +136,9 @@ flyToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 flyToggle.TextSize = 18
 flyToggle.Text = "Вкл/Выкл Полет"
 
-local fireEffect = Instance.new("ParticleEmitter")
-fireEffect.Texture = "rbxassetid://31760113" -- ID текстуры огня
-fireEffect.Size = NumberSequence.new(1)
-fireEffect.Speed = NumberRange.new(5, 10)
-fireEffect.Lifetime = NumberRange.new(0.5, 1)
-fireEffect.Rate = 100
+local fireEffect = Instance.new("Fire")
+fireEffect.Size = 10
+fireEffect.Heat = 0
 fireEffect.Enabled = false
 fireEffect.Parent = character.PrimaryPart
 
