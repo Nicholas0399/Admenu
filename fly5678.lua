@@ -164,7 +164,27 @@ local function toggleFly()
     end
 end
 
-local startFlyButton = createButton("startFlyButton", "Включить полет", UDim2.new(0.1, 0, 0.5, 0), toggleFly)
+local startFlyButton = Instance.new("TextButton")
+startFlyButton.Parent = flyMenu
+startFlyButton.Size = UDim2.new(0, 180, 0, 30)
+startFlyButton.Position = UDim2.new(0.1, 0, 0, 170)
+startFlyButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+startFlyButton.Font = Enum.Font.Gotham
+startFlyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+startFlyButton.TextSize = 18
+startFlyButton.Text = "Включить полет"
+startFlyButton.MouseButton1Click:Connect(toggleFly)
+
+local stopFlyButton = Instance.new("TextButton")
+stopFlyButton.Parent = flyMenu
+stopFlyButton.Size = UDim2.new(0, 180, 0, 30)
+stopFlyButton.Position = UDim2.new(0.1, 0, 0, 210)
+stopFlyButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+stopFlyButton.Font = Enum.Font.Gotham
+stopFlyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+stopFlyButton.TextSize = 18
+stopFlyButton.Text = "Выключить полет"
+stopFlyButton.MouseButton1Click:Connect(toggleFly)
 
 local buttons = {
     {"flyButton", "Полет", UDim2.new(0.1, 0, 0.1, 0), fly},
