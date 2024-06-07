@@ -60,7 +60,7 @@ local speedLabel = Instance.new("TextLabel")
 speedLabel.Parent = flyMenu
 speedLabel.Size = UDim2.new(0, 180, 0, 30)
 speedLabel.Position = UDim2.new(0.1, 0, 0, 10)
-speedLabel.Background
+speedLabel.BackgroundTransparency = 1
 Transparency = 1
 speedLabel.Font = Enum.Font.Gotham
 speedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
