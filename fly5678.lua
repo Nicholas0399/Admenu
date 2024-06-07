@@ -200,61 +200,90 @@ end)
 
 setupCharacter()
 
+local spinMenu = Instance.new("Frame")
+spinMenu.Parent = main
+spinMenu.Size = UDim2.new(0, 150, 0, 100)
+spinMenu.Position = UDim2.new(0.5, 0, 0.3, 0)
+spinMenu.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+spinMenu.Visible = false
+spinMenu.Active = true
+spinMenu.Draggable = true
+
+local spinToggle = Instance.new("TextButton")
+spinToggle.Parent = spinMenu
+spinToggle.Size = UDim2.new(0, 130, 0, 25)
+spinToggle.Position = UDim2.new(0.1, 0, 0, 10)
+spinToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+spinToggle.Font = Enum.Font.Gotham
+spinToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+spinToggle.TextSize = 14
+spinToggle.Text = "Вкл/Выкл Спиннер"
+
+local spinning = false
 local spinCount = 0
 
-local function spinner()
-    spinCount = spinCount + 1
-    if spinCount > 6 then
-        spinCount = 1
+local function startSpinner()
+    spinning = true
+    spinCount = 1
+    character.Humanoid.PlatformStand = true
+    character.HumanoidRootPart.Touched:Connect(onTouched)
+end
+
+local function stopSpinner()
+    spinning = false
+    character.Humanoid.PlatformStand = false
+    character.HumanoidRootPart.Touched:Disconnect()
+end
+
+local function toggleSpinner()
+    if spinning then
+        stopSpinner()
+        spinToggle.Text = "Вкл Спиннер"
+        spinToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    else
+        spinMenu.Visible = not spinMenu.Visible
     end
+end
 
-    local SPIN_FORCE = 500
-    local SPIN_SPEED = 5 * spinCount
+spinToggle.MouseButton1Click:Connect(toggleSpinner)
 
-    local function onHit(hitPart)
-        local targetHumanoid = hitPart.Parent:FindFirstChildOfClass("Humanoid")
-        if targetHumanoid then
-            local pushDirection = (hitPart.Position - character.PrimaryPart.Position).unit
+local function spinner()
+    spinMenu.Visible = not spinMenu.Visible
+end
+
+local function onTouched(hit)
+    local hitPart = hit.Parent
+    if hitPart and hitPart:FindFirstChild("Humanoid") then
+        local targetHumanoid = hitPart:FindFirstChild("Humanoid")
+        if targetHumanoid and targetHumanoid ~= humanoid then
+            local pushDirection = (hitPart.PrimaryPart.Position - character.PrimaryPart.Position).unit
             targetHumanoid:ChangeState(Enum.HumanoidStateType.Physics)
-            targetHumanoid:TakeDamage(10) -- При желании, измените значение на нужное
+            targetHumanoid:TakeDamage(10)
             targetHumanoid.Sit = true
             targetHumanoid.PlatformStand = true
             local bodyVelocity = Instance.new("BodyVelocity")
-            bodyVelocity.Velocity = pushDirection * SPIN_FORCE
+            bodyVelocity.Velocity = pushDirection * (20 + 10 * spinCount)
             bodyVelocity.P = 9e4
             bodyVelocity.MaxForce = Vector3.new(9e4, 9e4, 9e4)
-            bodyVelocity.Parent = hitPart
+            bodyVelocity.Parent = hitPart.PrimaryPart
             game.Debris:AddItem(bodyVelocity, 0.5)
         end
     end
-
-    local function onTouched(hit)
-        local hitPart = hit:GetPart()
-        if hitPart and hitPart.Parent then
-            onHit(hitPart)
-        end
-    end
-
-    local function startSpinner()
-        character.HumanoidRootPart.Touched:Connect(onTouched)
-    end
-
-    local function stopSpinner()
-        character.HumanoidRootPart.Touched:Disconnect()
-    end
-
-    startSpinner()
-
-    game:GetService("RunService").Stepped:Connect(function()
-        if spinCount > 0 then
-            character.HumanoidRootPart.CFrame *= CFrame.Angles(0, 0, math.rad(SPIN_SPEED))
-        end
-    end)
-
-    wait(5) -- Измените значение на необходимое время действия спиннера
-
-    stopSpinner()
 end
+
+game:GetService("RunService").Stepped:Connect(function()
+    if spinCount > 0 then
+        character.HumanoidRootPart.CFrame *= CFrame.Angles(0, 0, math.rad(5 * spinCount))
+        character.HumanoidRootPart.CFrame *= CFrame.new(0, 0, 0.1)
+        if spinning then
+            spinCount = spinCount + 1
+            if spinCount > 6 then
+                spinCount = 0
+                stopSpinner()
+            end
+        end
+    end
+end)
 
 local buttons = {
     {"flyButton", "Полет", UDim2.new(0.1, 0, 0.1, 0), fly},
@@ -282,4 +311,4 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
     Duration = 5
 })
 
-                
+
