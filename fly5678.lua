@@ -23,7 +23,7 @@ title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.TextSize = 24
 title.Text = "Nicholas"
 
-local function createButton(name, text, position)
+local function createButton(name, text, position, onClick)
     local button = Instance.new("TextButton")
     button.Name = name
     button.Parent = Frame
@@ -41,6 +41,9 @@ local function createButton(name, text, position)
     button.MouseLeave:Connect(function()
         button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     end)
+    if onClick then
+        button.MouseButton1Click:Connect(onClick)
+    end
     return button
 end
 
@@ -49,11 +52,18 @@ local buttons = {
     {"button2", "Button 2", UDim2.new(0.1, 0, 0.3, 0)},
     {"button3", "Button 3", UDim2.new(0.1, 0, 0.5, 0)},
     {"button4", "Button 4", UDim2.new(0.1, 0, 0.7, 0)},
-    {"button5", "Button 5", UDim2.new(0.1, 0, 0.9, 0)}
+    {"button5", "Button 5", UDim2.new(0.1, 0, 0.9, 0)},
+    {"closeButton", "Close Script", UDim2.new(0.1, 0, 1, -90), function()
+        main:Destroy()
+    end},
+    {"minimizeButton", "Minimize Script", UDim2.new(0.1, 0, 1, -45), function()
+        Frame.Size = UDim2.new(0, 190, 0, 40)
+        Frame.Position = UDim2.new(0.1, 0, 1, -40)
+    end}
 }
 
 for _, buttonInfo in ipairs(buttons) do
-    createButton(buttonInfo[1], buttonInfo[2], buttonInfo[3])
+    createButton(buttonInfo[1], buttonInfo[2], buttonInfo[3], buttonInfo[4])
 end
 
 game:GetService("StarterGui"):SetCore("SendNotification", { 
