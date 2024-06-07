@@ -100,3 +100,5 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
     Icon = "", -- Replace with actual icon ID
     Duration = 5
 })
+
+main.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
