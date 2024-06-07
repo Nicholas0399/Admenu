@@ -124,9 +124,21 @@ bodyGyro.maxTorque = Vector3.new(9e4, 9e4, 9e4)
 local bodyVelocity = Instance.new("BodyVelocity")
 bodyVelocity.maxForce = Vector3.new(9e4, 9e4, 9e4)
 
+local flyToggle = Instance.new("TextButton")
+flyToggle.Parent = flyMenu
+flyToggle.Size = UDim2.new(0, 180, 0, 30)
+flyToggle.Position = UDim2.new(0.1, 0, 0, 170)
+flyToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+flyToggle.Font = Enum.Font.Gotham
+flyToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+flyToggle.TextSize = 18
+flyToggle.Text = "Вкл/Выкл Полет"
+
 local function toggleFly()
     flying = not flying
     if flying then
+        flyToggle.Text = "Выкл Полет"
+        flyToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
         bodyGyro.Parent = character.PrimaryPart
         bodyVelocity.Parent = character.PrimaryPart
         while flying do
@@ -154,6 +166,8 @@ local function toggleFly()
             wait()
         end
     else
+        flyToggle.Text = "Вкл Полет"
+        flyToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
         bodyGyro.Parent = nil
         bodyVelocity.Parent = nil
         for _, v in pairs(character:GetDescendants()) do
@@ -164,27 +178,7 @@ local function toggleFly()
     end
 end
 
-local startFlyButton = Instance.new("TextButton")
-startFlyButton.Parent = flyMenu
-startFlyButton.Size = UDim2.new(0, 180, 0, 30)
-startFlyButton.Position = UDim2.new(0.1, 0, 0, 170)
-startFlyButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-startFlyButton.Font = Enum.Font.Gotham
-startFlyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-startFlyButton.TextSize = 18
-startFlyButton.Text = "Включить полет"
-startFlyButton.MouseButton1Click:Connect(toggleFly)
-
-local stopFlyButton = Instance.new("TextButton")
-stopFlyButton.Parent = flyMenu
-stopFlyButton.Size = UDim2.new(0, 180, 0, 30)
-stopFlyButton.Position = UDim2.new(0.1, 0, 0, 210)
-stopFlyButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-stopFlyButton.Font = Enum.Font.Gotham
-stopFlyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-stopFlyButton.TextSize = 18
-stopFlyButton.Text = "Выключить полет"
-stopFlyButton.MouseButton1Click:Connect(toggleFly)
+flyToggle.MouseButton1Click:Connect(toggleFly)
 
 local buttons = {
     {"flyButton", "Полет", UDim2.new(0.1, 0, 0.1, 0), fly},
