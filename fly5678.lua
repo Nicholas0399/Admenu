@@ -202,17 +202,57 @@ setupCharacter()
 
 local spinMenu = Instance.new("Frame")
 spinMenu.Parent = main
-spinMenu.Size = UDim2.new(0, 150, 0, 100)
+spinMenu.Size = UDim2.new(0, 150, 0, 200)
 spinMenu.Position = UDim2.new(0.5, 0, 0.3, 0)
 spinMenu.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 spinMenu.Visible = false
 spinMenu.Active = true
 spinMenu.Draggable = true
 
+local spinSpeedLabel = Instance.new("TextLabel")
+spinSpeedLabel.Parent = spinMenu
+spinSpeedLabel.Size = UDim2.new(0, 130, 0, 25)
+spinSpeedLabel.Position = UDim2.new(0.1, 0, 0, 10)
+spinSpeedLabel.BackgroundTransparency = 1
+spinSpeedLabel.Font = Enum.Font.Gotham
+spinSpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+spinSpeedLabel.TextSize = 14
+spinSpeedLabel.Text = "Скорость вращения:"
+
+local spinSpeedBox = Instance.new("TextBox")
+spinSpeedBox.Parent = spinMenu
+spinSpeedBox.Size = UDim2.new(0, 130, 0, 25)
+spinSpeedBox.Position = UDim2.new(0.1, 0, 0, 40)
+spinSpeedBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+spinSpeedBox.Font = Enum.Font.Gotham
+spinSpeedBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+spinSpeedBox.TextSize = 14
+spinSpeedBox.Text = "10"
+
+local pushStrengthLabel = Instance.new("TextLabel")
+pushStrengthLabel.Parent = spinMenu
+pushStrengthLabel.Size = UDim2.new(0, 130, 0, 25)
+pushStrengthLabel.Position = UDim2.new(0.1, 0, 0, 70)
+pushStrengthLabel.BackgroundTransparency = 1
+pushStrengthLabel.Font = Enum.Font.Gotham
+pushStrengthLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+pushStrengthLabel.TextSize = 14
+pushStrengthLabel.Text = "Сила отталкивания:"
+
+local pushStrengthBox = Instance.new("TextBox")
+pushStrengthBox.Parent = spinMenu
+pushStrengthBox.Size = UDim2.new(0, 130, 0, 25)
+pushStrengthBox.Position = UDim2.new(0.1, 0, 0, 100)
+pushStrengthBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+pushStrengthBox.Font = Enum.Font.Gotham
+pushStrengthBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+pushStrengthBox.TextSize = 14
+pushStrengthBox.Text = "20"
+
 local spinToggle = Instance.new("TextButton")
 spinToggle.Parent = spinMenu
 spinToggle.Size = UDim2.new(0, 130, 0, 25)
-spinToggle.Position = UDim2.new(0.1, 0, 0, 10)
+spinToggle.Position = UDim2.new(0.1, 0, 0, 130)
 spinToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 spinToggle.Font = Enum.Font.Gotham
 spinToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -226,13 +266,11 @@ local function startSpinner()
     spinning = true
     spinCount = 1
     character.Humanoid.PlatformStand = true
-    character.HumanoidRootPart.Touched:Connect(onTouched)
 end
 
 local function stopSpinner()
     spinning = false
     character.Humanoid.PlatformStand = false
-    character.HumanoidRootPart.Touched:Disconnect()
 end
 
 local function toggleSpinner()
@@ -252,6 +290,7 @@ local function spinner()
 end
 
 local function onTouched(hit)
+    if not spinning then return end
     local hitPart = hit.Parent
     if hitPart and hitPart:FindFirstChild("Humanoid") then
         local targetHumanoid = hitPart:FindFirstChild("Humanoid")
@@ -262,7 +301,7 @@ local function onTouched(hit)
             targetHumanoid.Sit = true
             targetHumanoid.PlatformStand = true
             local bodyVelocity = Instance.new("BodyVelocity")
-            bodyVelocity.Velocity = pushDirection * (20 + 10 * spinCount)
+            bodyVelocity.Velocity = pushDirection * (tonumber(pushStrengthBox.Text) or 20)
             bodyVelocity.P = 9e4
             bodyVelocity.MaxForce = Vector3.new(9e4, 9e4, 9e4)
             bodyVelocity.Parent = hitPart.PrimaryPart
@@ -271,10 +310,13 @@ local function onTouched(hit)
     end
 end
 
+character.HumanoidRootPart.Touched:Connect(onTouched)
+
 game:GetService("RunService").Stepped:Connect(function()
     if spinCount > 0 then
-        character.HumanoidRootPart.CFrame *= CFrame.Angles(0, 0, math.rad(5 * spinCount))
-        character.HumanoidRootPart.CFrame *= CFrame.new(0, 0, 0.1)
+        local speed = tonumber(spinSpeedBox.Text) or 10
+        character.HumanoidRootPart.CFrame = character.HumanoidRootPart.CFrame * CFrame.Angles(0, 0, math.rad(speed * spinCount))
+        character.HumanoidRootPart.CFrame = character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 0.1)
         if spinning then
             spinCount = spinCount + 1
             if spinCount > 6 then
@@ -310,5 +352,4 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
     Icon = "", -- Replace with actual icon ID
     Duration = 5
 })
-
 
