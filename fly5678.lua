@@ -7,7 +7,7 @@ main.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 main.ResetOnSpawn = false
 
 Frame.Parent = main
-Frame.Size = UDim2.new(0, 190, 0, 200)
+Frame.Size = UDim2.new(0, 150, 0, 150)
 Frame.Position = UDim2.new(0.1, 0, 0.379, 0)
 Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 Frame.BorderSizePixel = 0
@@ -15,25 +15,25 @@ Frame.Active = true
 Frame.Draggable = true
 
 title.Parent = Frame
-title.Size = UDim2.new(0, 150, 0, 30)
+title.Size = UDim2.new(0, 120, 0, 25)
 title.Position = UDim2.new(0.1, 0, 0, 0)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.GothamBold
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.TextSize = 24
+title.TextSize = 20
 title.Text = "Nicholas"
 
 local function createButton(name, text, position, onClick)
     local button = Instance.new("TextButton")
     button.Name = name
     button.Parent = Frame
-    button.Size = UDim2.new(0, 150, 0, 40)
+    button.Size = UDim2.new(0, 120, 0, 30)
     button.Position = position
     button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     button.BorderSizePixel = 0
     button.Font = Enum.Font.Gotham
     button.TextColor3 = Color3.fromRGB(0, 0, 0)
-    button.TextSize = 20
+    button.TextSize = 16
     button.Text = text
     button.MouseEnter:Connect(function()
         button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
@@ -49,7 +49,7 @@ end
 
 local flyMenu = Instance.new("Frame")
 flyMenu.Parent = main
-flyMenu.Size = UDim2.new(0, 200, 0, 300)
+flyMenu.Size = UDim2.new(0, 150, 0, 200)
 flyMenu.Position = UDim2.new(0.3, 0, 0.3, 0)
 flyMenu.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 flyMenu.Visible = false
@@ -58,42 +58,42 @@ flyMenu.Draggable = true
 
 local speedLabel = Instance.new("TextLabel")
 speedLabel.Parent = flyMenu
-speedLabel.Size = UDim2.new(0, 180, 0, 30)
+speedLabel.Size = UDim2.new(0, 130, 0, 25)
 speedLabel.Position = UDim2.new(0.1, 0, 0, 10)
 speedLabel.BackgroundTransparency = 1
 speedLabel.Font = Enum.Font.Gotham
 speedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-speedLabel.TextSize = 18
+speedLabel.TextSize = 14
 speedLabel.Text = "Скорость полета:"
 
 local speedBox = Instance.new("TextBox")
 speedBox.Parent = flyMenu
-speedBox.Size = UDim2.new(0, 180, 0, 30)
-speedBox.Position = UDim2.new(0.1, 0, 0, 50)
+speedBox.Size = UDim2.new(0, 130, 0, 25)
+speedBox.Position = UDim2.new(0.1, 0, 0, 40)
 speedBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 speedBox.Font = Enum.Font.Gotham
 speedBox.TextColor3 = Color3.fromRGB(0, 0, 0)
-speedBox.TextSize = 18
+speedBox.TextSize = 14
 speedBox.Text = "50"
 
 local noclipLabel = Instance.new("TextLabel")
 noclipLabel.Parent = flyMenu
-noclipLabel.Size = UDim2.new(0, 180, 0, 30)
-noclipLabel.Position = UDim2.new(0.1, 0, 0, 90)
+noclipLabel.Size = UDim2.new(0, 130, 0, 25)
+noclipLabel.Position = UDim2.new(0.1, 0, 0, 70)
 noclipLabel.BackgroundTransparency = 1
 noclipLabel.Font = Enum.Font.Gotham
 noclipLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-noclipLabel.TextSize = 18
+noclipLabel.TextSize = 14
 noclipLabel.Text = "Пролет сквозь стены:"
 
 local noclipToggle = Instance.new("TextButton")
 noclipToggle.Parent = flyMenu
-noclipToggle.Size = UDim2.new(0, 180, 0, 30)
-noclipToggle.Position = UDim2.new(0.1, 0, 0, 130)
+noclipToggle.Size = UDim2.new(0, 130, 0, 25)
+noclipToggle.Position = UDim2.new(0.1, 0, 0, 100)
 noclipToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 noclipToggle.Font = Enum.Font.Gotham
 noclipToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-noclipToggle.TextSize = 18
+noclipToggle.TextSize = 14
 noclipToggle.Text = "Выкл"
 
 local function toggleNoclip()
@@ -126,12 +126,12 @@ bodyVelocity.maxForce = Vector3.new(9e4, 9e4, 9e4)
 
 local flyToggle = Instance.new("TextButton")
 flyToggle.Parent = flyMenu
-flyToggle.Size = UDim2.new(0, 180, 0, 30)
-flyToggle.Position = UDim2.new(0.1, 0, 0, 170)
+flyToggle.Size = UDim2.new(0, 130, 0, 25)
+flyToggle.Position = UDim2.new(0.1, 0, 0, 130)
 flyToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 flyToggle.Font = Enum.Font.Gotham
 flyToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-flyToggle.TextSize = 18
+flyToggle.TextSize = 14
 flyToggle.Text = "Вкл/Выкл Полет"
 
 local function toggleFly()
@@ -143,7 +143,6 @@ local function toggleFly()
         bodyVelocity.Parent = character.PrimaryPart
         while flying do
             local moveDirection = humanoid.MoveDirection
-            bodyGyro.cframe = workspace.CurrentCamera.CoordinateFrame
             local speed = tonumber(speedBox.Text) or 50
             if moveDirection.magnitude > 0 then
                 bodyVelocity.velocity = workspace.CurrentCamera.CFrame.LookVector * speed
@@ -201,8 +200,16 @@ end)
 
 setupCharacter()
 
+local spinCount = 0
+
 local function spinner()
-    local SPIN_FORCE = 5000 -- Измените на необходимую силу вращения
+    spinCount = spinCount + 1
+    if spinCount > 6 then
+        spinCount = 1
+    end
+
+    local SPIN_FORCE = 500
+    local SPIN_SPEED = 5 * spinCount
 
     local function onHit(hitPart)
         local targetHumanoid = hitPart.Parent:FindFirstChildOfClass("Humanoid")
@@ -210,8 +217,14 @@ local function spinner()
             local pushDirection = (hitPart.Position - character.PrimaryPart.Position).unit
             targetHumanoid:ChangeState(Enum.HumanoidStateType.Physics)
             targetHumanoid:TakeDamage(10) -- При желании, измените значение на нужное
-            targetHumanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, true)
-            targetHumanoid:Move(Vector3.new(pushDirection.X, 0, pushDirection.Z) * SPIN_FORCE)
+            targetHumanoid.Sit = true
+            targetHumanoid.PlatformStand = true
+            local bodyVelocity = Instance.new("BodyVelocity")
+            bodyVelocity.Velocity = pushDirection * SPIN_FORCE
+            bodyVelocity.P = 9e4
+            bodyVelocity.MaxForce = Vector3.new(9e4, 9e4, 9e4)
+            bodyVelocity.Parent = hitPart
+            game.Debris:AddItem(bodyVelocity, 0.5)
         end
     end
 
@@ -222,24 +235,20 @@ local function spinner()
         end
     end
 
-    local function onCollision(hit)
-        onHit(hit)
-    end
-
     local function startSpinner()
         character.HumanoidRootPart.Touched:Connect(onTouched)
-        character.HumanoidRootPart.Touched:Connect(onCollision)
     end
 
     local function stopSpinner()
-        character.HumanoidRootPart.Touched:Disconnect()
         character.HumanoidRootPart.Touched:Disconnect()
     end
 
     startSpinner()
 
     game:GetService("RunService").Stepped:Connect(function()
-        character.HumanoidRootPart.CFrame *= CFrame.Angles(0, math.rad(10), 0) -- Измените значение math.rad(10) на нужный угол вращения
+        if spinCount > 0 then
+            character.HumanoidRootPart.CFrame *= CFrame.Angles(0, 0, math.rad(SPIN_SPEED))
+        end
     end)
 
     wait(5) -- Измените значение на необходимое время действия спиннера
@@ -257,7 +266,7 @@ local buttons = {
         main:Destroy()
     end},
     {"minimizeButton", "Minimize Script", UDim2.new(0.1, 0, 1, -45), function()
-        Frame.Size = UDim2.new(0, 190, 0, 40)
+        Frame.Size = UDim2.new(0, 150, 0, 40)
         Frame.Position = UDim2.new(0.1, 0, 1, -40)
     end}
 }
@@ -272,3 +281,5 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
     Icon = "", -- Replace with actual icon ID
     Duration = 5
 })
+
+                
