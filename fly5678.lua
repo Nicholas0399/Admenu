@@ -23,6 +23,20 @@ title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.TextSize = 24
 title.Text = "Nicholas"
 
+local nowe = false
+
+local function toggleFlight()
+    nowe = not nowe
+
+    if nowe then
+        game.Players.LocalPlayer.Character.Humanoid.PlatformStand = true
+        game.Players.LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+    else
+        game.Players.LocalPlayer.Character.Humanoid.PlatformStand = false
+        game.Players.LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+    end
+end
+
 local function createButton(name, text, position, onClick)
     local button = Instance.new("TextButton")
     button.Name = name
@@ -48,7 +62,7 @@ local function createButton(name, text, position, onClick)
 end
 
 local buttons = {
-    {"button1", "Button 1", UDim2.new(0.1, 0, 0.1, 0)},
+    {"flightButton", "Полёт", UDim2.new(0.1, 0, 0.1, 0), toggleFlight},
     {"button2", "Button 2", UDim2.new(0.1, 0, 0.3, 0)},
     {"button3", "Button 3", UDim2.new(0.1, 0, 0.5, 0)},
     {"button4", "Button 4", UDim2.new(0.1, 0, 0.7, 0)},
