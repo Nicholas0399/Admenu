@@ -1,6 +1,24 @@
+-- Серверный скрипт (ServerScriptService)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local FireEvent = Instance.new("RemoteEvent", ReplicatedStorage)
+FireEvent.Name = "FireEvent"
+
+FireEvent.OnServerEvent:Connect(function(player)
+    local character = player.Character
+    if character then
+        local fireEffect = Instance.new("Fire")
+        fireEffect.Parent = character.HumanoidRootPart
+        fireEffect.Size = 10
+        fireEffect.Heat = 0
+    end
+end)
+
+-- Клиентский скрипт (LocalScript)
 local main = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
 local title = Instance.new("TextLabel")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local FireEvent = ReplicatedStorage:WaitForChild("FireEvent")
 
 main.Name = "main"
 main.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
@@ -45,6 +63,10 @@ local function createButton(name, text, position, onClick)
         button.MouseButton1Click:Connect(onClick)
     end
     return button
+end
+
+local function addFire()
+    FireEvent:FireServer()
 end
 
 local flyMenu = Instance.new("Frame")
@@ -96,34 +118,14 @@ noclipToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 noclipToggle.TextSize = 18
 noclipToggle.Text = "Выкл"
 
-local flyButton = createButton("flyButton", "Полет", UDim2.new(0.1, 0, 0.1, 0), fly)
+local fireButton = createButton("fireButton", "Включить огонь", UDim2.new(0.1, 0, 0.8, 0), addFire)
+
+local flyButton = createButton("flyButton", "Полет", UDim2.new(0.1, 0, 0.1, 0), toggleFly)
 
 local flying = false
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
-
-local bodyGyro = Instance.new("BodyGyro")
-bodyGyro.P = 9e4
-bodyGyro.maxTorque = Vector3.new(9e4, 9e4, 9e4)
-
-local bodyVelocity = Instance.new("BodyVelocity")
-bodyVelocity.maxForce = Vector3.new(9e4, 9e4, 9e4)
-
-local fireEffect = Instance.new("Fire")
-fireEffect.Size = 10
-fireEffect.Heat = 0
-fireEffect.Enabled = false
-
-local flyToggle = Instance.new("TextButton")
-flyToggle.Parent = flyMenu
-flyToggle.Size = UDim2.new(0, 180, 0, 30)
-flyToggle.Position = UDim2.new(0.1, 0, 0, 170)
-flyToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-flyToggle.Font = Enum.Font.Gotham
-flyToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-flyToggle.TextSize = 18
-flyToggle.Text = "Вкл/Выкл Полет"
 
 local function toggleNoclip()
     if noclipToggle.Text == "Выкл" then
@@ -138,32 +140,28 @@ end
 local function fly()
     flyMenu.Visible = not flyMenu.Visible
     if flyMenu.Visible then
-        fireEffect.Enabled = true
+        if flying then
+            local speed = tonumber(speedBox.Text) or 50
+            local moveDirection = humanoid.MoveDirection
+            humanoid.WalkSpeed = speed
+        end
     else
-        fireEffect.Enabled = false
+        humanoid.WalkSpeed = 16
     end
 end
 
 local function toggleFly()
     flying = not flying
     if flying then
-        flyToggle.Text = "Выкл Полет"
-        flyToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-        bodyGyro.Parent = character.PrimaryPart
-        bodyVelocity.Parent = character.PrimaryPart
-        fireEffect.Parent = character
+        flyButton.Text = "Выкл Полет"
+        flyButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+        fly()
     else
-        flyToggle.Text = "Вкл Полет"
-        flyToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-        bodyGyro.Parent = nil
-        bodyVelocity.Parent = nil
-        fireEffect.Parent = nil
+        flyButton.Text = "Вкл Полет"
+        flyButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        fly()
     end
 end
-
-noclipToggle.MouseButton1Click:Connect(toggleNoclip)
-flyToggle.MouseButton1Click:Connect(toggleFly)
-flyButton.MouseButton1Click:Connect(fly)
 
 local buttons = {
     {"button2", "Button 2", UDim2.new(0.1, 0, 0.3, 0)},
@@ -193,13 +191,6 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
 local function setupCharacter()
     character = player.Character or player.CharacterAdded:Wait()
     humanoid = character:WaitForChild("Humanoid")
-
-    bodyGyro = Instance.new("BodyGyro")
-    bodyGyro.P = 9e4
-    bodyGyro.maxTorque = Vector3.new(9e4, 9e4, 9e4)
-
-    bodyVelocity = Instance.new("BodyVelocity")
-    bodyVelocity.maxForce = Vector3.new(9e4, 9e4, 9e4)
 end
 
 player.CharacterAdded:Connect(setupCharacter)
