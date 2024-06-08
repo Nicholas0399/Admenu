@@ -110,7 +110,7 @@ pushToggle.MouseButton1Click:Connect(togglePush)
 
 local beeSwarmMenu = Instance.new("Frame")
 beeSwarmMenu.Parent = main
-beeSwarmMenu.Size = UDim2.new(0, 150, 0, 250)
+beeSwarmMenu.Size = UDim2.new(0, 150, 0, 300)
 beeSwarmMenu.Position = UDim2.new(0.3, 0, 0.3, 0)
 beeSwarmMenu.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 beeSwarmMenu.Visible = false
@@ -140,7 +140,7 @@ coordsLabel.Text = "Координаты:"
 local hiveCoordLabel = Instance.new("TextLabel")
 hiveCoordLabel.Parent = beeSwarmMenu
 hiveCoordLabel.Size = UDim2.new(0, 130, 0, 25)
-hiveCoordLabel.Position = UDim2.new(0.1, 0, 0, 70)
+hiveCoordLabel.Position = UDim2.new(0.1, 0, 70)
 hiveCoordLabel.BackgroundTransparency = 1
 hiveCoordLabel.Font = Enum.Font.Gotham
 hiveCoordLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -150,7 +150,7 @@ hiveCoordLabel.Text = "Коорд. Соты:"
 local hiveCoordBox = Instance.new("TextBox")
 hiveCoordBox.Parent = beeSwarmMenu
 hiveCoordBox.Size = UDim2.new(0, 130, 0, 25)
-hiveCoordBox.Position = UDim2.new(0.1, 0, 0, 100)
+hiveCoordBox.Position = UDim2.new(0.1, 0, 100)
 hiveCoordBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 hiveCoordBox.Font = Enum.Font.Gotham
 hiveCoordBox.TextColor3 = Color3.fromRGB(0, 0, 0)
@@ -160,7 +160,7 @@ hiveCoordBox.Text = ""
 local farmCoordLabel = Instance.new("TextLabel")
 farmCoordLabel.Parent = beeSwarmMenu
 farmCoordLabel.Size = UDim2.new(0, 130, 0, 25)
-farmCoordLabel.Position = UDim2.new(0.1, 0, 0, 130)
+farmCoordLabel.Position = UDim2.new(0.1, 0, 130)
 farmCoordLabel.BackgroundTransparency = 1
 farmCoordLabel.Font = Enum.Font.Gotham
 farmCoordLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -170,12 +170,24 @@ farmCoordLabel.Text = "Коорд. Фарм:"
 local farmCoordBox = Instance.new("TextBox")
 farmCoordBox.Parent = beeSwarmMenu
 farmCoordBox.Size = UDim2.new(0, 130, 0, 25)
-farmCoordBox.Position = UDim2.new(0.1, 0, 0, 160)
+farmCoordBox.Position = UDim2.new(0.1, 0, 160)
 farmCoordBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 farmCoordBox.Font = Enum.Font.Gotham
 farmCoordBox.TextColor3 = Color3.fromRGB(0, 0, 0)
 farmCoordBox.TextSize = 14
 farmCoordBox.Text = ""
+
+local autoReturnToggle = Instance.new("TextButton")
+autoReturnToggle.Parent = beeSwarmMenu
+autoReturnToggle.Size = UDim2.new(0, 130, 0, 25)
+autoReturnToggle.Position = UDim2.new(0.1, 0, 0, 190)
+autoReturnToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+autoReturnToggle.Font = Enum.Font.Gotham
+autoReturnToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+autoReturnToggle.TextSize = 14
+autoReturnToggle.Text = "Вкл/Выкл"
+
+local running = false
 
 local function updateCoords()
     while beeSwarmMenu.Visible do
@@ -190,67 +202,57 @@ end
 
 beeSwarmMenu:GetPropertyChangedSignal("Visible"):Connect(updateCoords)
 
-local function autoReturn()
-    while beeSwarmMenu.Visible do
-        if autoReturnToggle.BackgroundColor3 == Color3.fromRGB(0, 255, 0) then
-            local player = game.Players.LocalPlayer
-            if player and player.Backpack and player.Backpack:FindFirstChild("Container") then
-                local container = player.Backpack.Container
-                if container:FindFirstChild("Amount") and container.Amount.Value >= container.MaxAmount.Value then
-                    local character = player.Character
-                    if character and character:FindFirstChild("HumanoidRootPart") then
-                        local hiveCoords = hiveCoordBox.Text:split(",")
-                        local targetPosition = Vector3.new(tonumber(hiveCoords[1]), tonumber(hiveCoords[2]), tonumber(hiveCoords[3]))
+local function moveToCoordinates(coords)
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        local coordTable = coords:split(",")
+        local targetPosition = Vector3.new(tonumber(coordTable[1]), tonumber(coordTable[2]), tonumber(coordTable[3]))
 
-                        local humanoid = character:FindFirstChild("Humanoid")
-                        if humanoid then
-                            humanoid:MoveTo(targetPosition)
-                            humanoid.MoveToFinished:Wait() -- Wait until the character reaches the hive
-                            -- Simulate pressing "F"
-                            local virtualUser = game:GetService("VirtualUser")
-                            virtualUser:CaptureController()
-                            virtualUser:SetKeyDown("0x46") -- "F" key
-                            wait(0.1)
-                            virtualUser:SetKeyUp("0x46")
-                        end
-                    end
-                end
+        local humanoid = character:FindFirstChild("Humanoid")
+        if humanoid then
+            humanoid:MoveTo(targetPosition)
+            humanoid.MoveToFinished:Wait() -- Wait until the character reaches the target position
+        end
+    end
+end
+
+local function autoFarmAndReturn()
+    while running do
+        local player = game.Players.LocalPlayer
+        if player and player.Backpack and player.Backpack:FindFirstChild("Container") then
+            local container = player.Backpack.Container
+            if container:FindFirstChild("Amount") and container.Amount.Value >= container.MaxAmount.Value then
+                moveToCoordinates(hiveCoordBox.Text)
+                -- Simulate pressing "F"
+                local virtualUser = game:GetService("VirtualUser")
+                virtualUser:CaptureController()
+                virtualUser:SetKeyDown("0x46") -- "F" key
+                wait(0.1)
+                virtualUser:SetKeyUp("0x46")
+            else
+                moveToCoordinates(farmCoordBox.Text)
             end
         end
         wait(1)
     end
 end
 
-spawn(autoReturn)
-
-local function toggleBeeSwarmMenu()
-    beeSwarmMenu.Visible = not beeSwarmMenu.Visible
-end
-
-local function createToggleButton(name, text, position, onClick, initialColor)
-    local button = Instance.new("TextButton")
-    button.Name = name
-    button.Parent = beeSwarmMenu
-    button.Size = UDim2.new(0, 130, 0, 25)
-    button.Position = position
-    button.BackgroundColor3 = initialColor or Color3.fromRGB(255, 0, 0)
-    button.Font = Enum.Font.Gotham
-    button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    button.TextSize = 14
-    button.Text = text
-    button.MouseButton1Click:Connect(onClick)
-    return button
-end
-
 local function toggleAutoReturn()
-    if autoReturnToggle.BackgroundColor3 == Color3.fromRGB(255, 0, 0) then
+    running = not running
+    if running then
         autoReturnToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+        spawn(autoFarmAndReturn)
     else
         autoReturnToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
     end
 end
 
-local autoReturnToggle = createToggleButton("autoReturnToggle", "Авто Возврат", UDim2.new(0.1, 0, 0, 190), toggleAutoReturn, Color3.fromRGB(255, 0, 0))
+autoReturnToggle.MouseButton1Click:Connect(toggleAutoReturn)
+
+local function toggleBeeSwarmMenu()
+    beeSwarmMenu.Visible = not beeSwarmMenu.Visible
+end
 
 local buttons = {
     {"flyButton", "Полет", UDim2.new(0.1, 0, 0.1, 0), fly},
@@ -259,6 +261,7 @@ local buttons = {
     {"button4", "Button 4", UDim2.new(0.1, 0, 0.7, 0)},
     {"button5", "Button 5", UDim2.new(0.1, 0, 0.9, 0)},
     {"closeButton", "Close Script", UDim2.new(0.1, 0, 1, -90), function()
+        running = false
         main:Destroy()
     end},
     {"minimizeButton", "Minimize Script", UDim2.new(0.1, 0, 1, -45), function()
@@ -270,4 +273,3 @@ local buttons = {
 for _, buttonInfo in ipairs(buttons) do
     createButton(buttonInfo[1], buttonInfo[2], buttonInfo[3], buttonInfo[4])
 end
-
