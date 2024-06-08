@@ -127,10 +127,20 @@ beeSwarmTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
 beeSwarmTitle.TextSize = 14
 beeSwarmTitle.Text = "Bee Swarm Simulator"
 
+local coordsLabel = Instance.new("TextLabel")
+coordsLabel.Parent = beeSwarmMenu
+coordsLabel.Size = UDim2.new(0, 130, 0, 25)
+coordsLabel.Position = UDim2.new(0.1, 0, 0, 40)
+coordsLabel.BackgroundTransparency = 1
+coordsLabel.Font = Enum.Font.Gotham
+coordsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+coordsLabel.TextSize = 14
+coordsLabel.Text = "Координаты:"
+
 local beeSwarmToggle = Instance.new("TextButton")
 beeSwarmToggle.Parent = beeSwarmMenu
 beeSwarmToggle.Size = UDim2.new(0, 130, 0, 25)
-beeSwarmToggle.Position = UDim2.new(0.1, 0, 0, 50)
+beeSwarmToggle.Position = UDim2.new(0.1, 0, 0, 70)
 beeSwarmToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 beeSwarmToggle.Font = Enum.Font.Gotham
 beeSwarmToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -146,22 +156,34 @@ end
 
 beeSwarmToggle.MouseButton1Click:Connect(toggleAutoReturn)
 
+local function updateCoordinates()
+    while true do
+        wait(0.1)
+        local player = game.Players.LocalPlayer
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local pos = player.Character.HumanoidRootPart.Position
+            coordsLabel.Text = string.format("Координаты: (%.1f, %.1f, %.1f)", pos.X, pos.Y, pos.Z)
+        end
+    end
+end
+
+spawn(updateCoordinates)
+
 local function autoReturn()
     while autoReturnEnabled do
         wait(1) -- Wait for 1 second between checks
         local player = game.Players.LocalPlayer
         local character = player.Character
-        local backpack = player.Backpack
         if character and character:FindFirstChild("HumanoidRootPart") then
-            local inventory = character:FindFirstChild("Inventory") -- Assuming the inventory is a child of character
-            if inventory and inventory:FindFirstChild("Portfel") then -- Assuming "Portfel" is the name of the backpack
-                local portfel = inventory.Portfel
-                if portfel.Value >= portfel.MaxValue then
+            local backpack = character:FindFirstChild("Backpack")
+            if backpack then
+                local portfel = backpack:FindFirstChild("Portfel")
+                if portfel and portfel.Value >= portfel.MaxValue then
                     -- Auto return logic
                     local hives = game.Workspace:FindFirstChild("Hives") -- Assuming hives are located in Workspace
                     if hives then
                         for _, hive in ipairs(hives:GetChildren()) do
-                            if hive.Owner.Value == player.Name then
+                            if hive:FindFirstChild("Owner") and hive.Owner.Value == player.Name then
                                 local targetPosition = hive.Position
                                 local humanoid = character:FindFirstChild("Humanoid")
                                 if humanoid then
@@ -209,61 +231,4 @@ for _, buttonInfo in ipairs(buttons) do
     createButton(buttonInfo[1], buttonInfo[2], buttonInfo[3], buttonInfo[4])
 end
 
--- Adding bee swarm menu toggle button
-local beeSwarmToggle = Instance.new("TextButton")
-beeSwarmToggle.Parent = beeSwarmMenu
-beeSwarmToggle.Size = UDim2.new(0, 130, 0, 25)
-beeSwarmToggle.Position = UDim2.new(0.1, 0, 0, 50)
-beeSwarmToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-beeSwarmToggle.Font = Enum.Font.Gotham
-beeSwarmToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-beeSwarmToggle.TextSize = 14
-beeSwarmToggle.Text = "Авто Возврат"
-
-local autoReturnEnabled = false
-
-local function toggleAutoReturn()
-    autoReturnEnabled = not autoReturnEnabled
-    beeSwarmToggle.BackgroundColor3 = autoReturnEnabled and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
-end
-
-beeSwarmToggle.MouseButton1Click:Connect(toggleAutoReturn)
-
-local function autoReturn()
-    while autoReturnEnabled do
-        wait(1) -- Wait for 1 second between checks
-        local player = game.Players.LocalPlayer
-        local character = player.Character
-        if character and character:FindFirstChild("HumanoidRootPart") then
-            local backpack = character:FindFirstChild("Backpack")
-            if backpack then
-                local portfel = backpack:FindFirstChild("Portfel")
-                if portfel and portfel.Value >= portfel.MaxValue then
-                    -- Auto return logic
-                    local hives = game.Workspace:FindFirstChild("Hives") -- Assuming hives are located in Workspace
-                    if hives then
-                        for _, hive in ipairs(hives:GetChildren()) do
-                            if hive:FindFirstChild("Owner") and hive.Owner.Value == player.Name then
-                                local targetPosition = hive.Position
-                                local humanoid = character:FindFirstChild("Humanoid")
-                                if humanoid then
-                                    humanoid:MoveTo(targetPosition)
-                                    humanoid.MoveToFinished:Wait() -- Wait until the character reaches the hive
-                                    -- Simulate pressing "F"
-                                    local virtualUser = game:GetService("VirtualUser")
-                                    virtualUser:CaptureController()
-                                    virtualUser:SetKeyDown("0x46") -- "F" key
-                                    wait(0.1)
-                                    virtualUser:SetKeyUp("0x46")
-                                end
-                                break
-                            end
-                        end
-                    end
-                end
-            end
-        end
-    end
-end
-
-spawn(autoReturn)
+                                
