@@ -47,10 +47,6 @@ local function createButton(name, text, position, onClick)
     return button
 end
 
-local function togglePush()
-    pushMenu.Visible = not pushMenu.Visible
-end
-
 local pushMenu = Instance.new("Frame")
 pushMenu.Parent = main
 pushMenu.Size = UDim2.new(0, 150, 0, 200)
@@ -90,6 +86,12 @@ pushToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 pushToggle.TextSize = 14
 pushToggle.Text = "Вкл/Выкл Отталкивание"
 
+local function togglePush()
+    pushMenu.Visible = not pushMenu.Visible
+end
+
+pushToggle.MouseButton1Click:Connect(togglePush)
+
 local function push()
     local pushStrength = tonumber(pushStrengthBox.Text) or 50
     local players = game.Players:GetPlayers()
@@ -103,8 +105,6 @@ local function push()
         end
     end
 end
-
-pushToggle.MouseButton1Click:Connect(togglePush)
 
 local beeSwarmMenu = Instance.new("Frame")
 beeSwarmMenu.Parent = main
@@ -242,15 +242,27 @@ local buttons = {
     {"beeButton", "Симулятор пчеловода", UDim2.new(0.1, 0, 0.5, 0), function()
         beeSwarmMenu.Visible = not beeSwarmMenu.Visible
     end},
-    {"closeButton", "Close Script", UDim2.new(0.1, 0, 1, -90), function()
+    {"closeButton", "Закрыть скрипт", UDim2.new(0.1, 0, 1, -90), function()
         main:Destroy()
     end},
-    {"minimizeButton", "Minimize Script", UDim2.new(0.1, 0, 1, -45), function()
+    {"minimizeButton", "Свернуть скрипт", UDim2.new(0.1, 0, 1, -45), function()
         Frame.Size = UDim2.new(0, 140, 0, 40)
         Frame.Position = UDim2.new(0.1, 0, 1, -40)
     end}
 }
 
+-- Добавляем кнопки в главное меню
 for i, buttonInfo in ipairs(buttons) do
     createButton(buttonInfo[1], buttonInfo[2], buttonInfo[3], buttonInfo[4])
 end
+
+-- Обновляем размеры и позиции, чтобы кнопки не накладывались
+Frame.Size = UDim2.new(0, 280, 0, 200 + (#buttons * 40))
+for i, buttonInfo in ipairs(buttons) do
+    local button = Frame:FindFirstChild(buttonInfo[1])
+    if button then
+        button.Position = UDim2.new(0.1, 0, 0, 30 * (i - 1) + 30)
+    end
+end
+
+            
