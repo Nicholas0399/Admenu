@@ -106,8 +106,6 @@ local function push()
     end
 end
 
-pushToggle.MouseButton1Click:Connect(togglePush)
-
 local beeSwarmMenu = Instance.new("Frame")
 beeSwarmMenu.Parent = main
 beeSwarmMenu.Size = UDim2.new(0, 150, 0, 200)
@@ -167,7 +165,6 @@ autoReturnToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 autoReturnToggle.TextSize = 14
 autoReturnToggle.Text = "Вкл/Выкл"
 
--- Функция для разделения строки на компоненты
 function string:split(sep)
     local sep, fields = sep or ":", {}
     local pattern = string.format("([^%s]+)", sep)
@@ -238,23 +235,26 @@ end
 
 autoReturnToggle.MouseButton1Click:Connect(toggleAutoReturn)
 
+-- Функция fly должна быть определена
+local function fly()
+    -- Определите поведение функции полета
+end
+
 local buttons = {
-    {"flyButton", "Полет", UDim2.new(0.1, 0, 0.1, 0), fly},
-    {"pushButton", "Отталкивание", UDim2.new(0.1, 0, 0.3, 0), push},
-    {"beeButton", "Симулятор пчеловода", UDim2.new(0.1, 0, 0.5, 0), function()
+    {"flyButton", "Полет", UDim2.new(0, 10, 0, 35), fly},
+    {"pushButton", "Отталкивание", UDim2.new(0, 10, 0, 70), push},
+    {"beeButton", "Симулятор пчеловода", UDim2.new(0, 10, 0, 105), function()
         beeSwarmMenu.Visible = not beeSwarmMenu.Visible
     end},
-    {"closeButton", "Close Script", UDim2.new(0.1, 0, 1, -90), function()
+    {"closeButton", "Закрыть скрипт", UDim2.new(0, 10, 0, 140), function()
         main:Destroy()
     end},
-    {"minimizeButton", "Minimize Script", UDim2.new(0.1, 0, 1, -45), function()
+    {"minimizeButton", "Свернуть скрипт", UDim2.new(0, 10, 0, 175), function()
         Frame.Size = UDim2.new(0, 140, 0, 40)
         Frame.Position = UDim2.new(0.1, 0, 1, -40)
     end}
 }
 
--- Добавляем кнопки в главное меню
--- Добавляем кнопки в главное меню
 for i, buttonInfo in ipairs(buttons) do
     createButton(buttonInfo[1], buttonInfo[2], buttonInfo[3], buttonInfo[4])
 end
