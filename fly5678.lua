@@ -100,7 +100,6 @@ local function push()
             local targetPosition = player.Character.HumanoidRootPart.Position
             local pushDirection = (targetPosition - character.HumanoidRootPart.Position).unit
             player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
-            player.Character.Humanoid.PlatformStand = false
             player.Character.Humanoid:Move(pushDirection * pushStrength)
         end
     end
@@ -167,7 +166,6 @@ autoReturnToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 autoReturnToggle.TextSize = 14
 autoReturnToggle.Text = "Вкл/Выкл"
 
--- Функция для разделения строки на компоненты
 function string:split(sep)
     local sep, fields = sep or ":", {}
     local pattern = string.format("([^%s]+)", sep)
@@ -212,7 +210,6 @@ local function autoFarmAndReturn()
             local container = player.Backpack.Container
             if container:FindFirstChild("Amount") and container.Amount.Value >= container.MaxAmount.Value then
                 moveToCoordinates(hiveCoordBox.Text)
-                -- Simulate pressing "F"
                 local virtualUser = game:GetService("VirtualUser")
                 virtualUser:CaptureController()
                 virtualUser:SetKeyDown("0x46") -- "F" key
@@ -257,3 +254,4 @@ local buttons = {
 for i, buttonInfo in ipairs(buttons) do
     createButton(buttonInfo[1], buttonInfo[2], UDim2.new(0.1 * (i-1), 0, 0.7, 0), buttonInfo[4])
 end
+            
