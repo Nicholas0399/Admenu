@@ -21,7 +21,7 @@ title.BackgroundTransparency = 1
 title.Font = Enum.Font.GothamBold
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.TextSize = 20
-title.Text = "Nicholas"
+title.Text = "Ваньванич дебил и не удачник, удаляй всю эту парашу"
 
 local function createButton(name, text, position, onClick)
     local button = Instance.new("TextButton")
@@ -164,105 +164,3 @@ autoReturnToggle.Font = Enum.Font.Gotham
 autoReturnToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 autoReturnToggle.TextSize = 14
 autoReturnToggle.Text = "Вкл/Выкл"
-
--- Функция для разделения строки на компоненты
-function string:split(sep)
-    local sep, fields = sep or ":", {}
-    local pattern = string.format("([^%s]+)", sep)
-    self:gsub(pattern, function(c) fields[#fields + 1] = c end)
-    return fields
-end
-
-local running = false
-
-local function updateCoords()
-    while beeSwarmMenu.Visible do
-        local player = game.Players.LocalPlayer
-        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            local position = player.Character.HumanoidRootPart.Position
-            coordsLabel.Text = string.format("Координаты: X: %.2f, Y: %.2f, Z: %.2f", position.X, position.Y, position.Z)
-        end
-        wait(1)
-    end
-end
-
-beeSwarmMenu:GetPropertyChangedSignal("Visible"):Connect(updateCoords)
-
-local function moveToCoordinates(coords)
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    if character and character:FindFirstChild("HumanoidRootPart") then
-        local coordTable = coords:split(",")
-        local targetPosition = Vector3.new(tonumber(coordTable[1]), tonumber(coordTable[2]), tonumber(coordTable[3]))
-
-        local humanoid = character:FindFirstChild("Humanoid")
-        if humanoid then
-            humanoid:MoveTo(targetPosition)
-            humanoid.MoveToFinished:Wait() -- Wait until the character reaches the target position
-        end
-    end
-end
-
-local function autoFarmAndReturn()
-    while running do
-        local player = game.Players.LocalPlayer
-        if player and player.Backpack and player.Backpack:FindFirstChild("Container") then
-            local container = player.Backpack.Container
-            if container:FindFirstChild("Amount") and container.Amount.Value >= container.MaxAmount.Value then
-                moveToCoordinates(hiveCoordBox.Text)
-                -- Simulate pressing "F"
-                local virtualUser = game:GetService("VirtualUser")
-                virtualUser:CaptureController()
-                virtualUser:SetKeyDown("0x46") -- "F" key
-                wait(0.1)
-                virtualUser:SetKeyUp("0x46")
-            else
-                moveToCoordinates(farmCoordBox.Text)
-            end
-        end
-        wait(1)
-    end
-end
-
-local function toggleAutoReturn()
-    running = not running
-    if running then
-        autoReturnToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-        spawn(autoFarmAndReturn)
-    else
-        autoReturnToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-    end
-end
-
-autoReturnToggle.MouseButton1Click:Connect(toggleAutoReturn)
-
-local buttons = {
-    {"flyButton", "Полет", UDim2.new(0.1, 0, 0.1, 0), fly},
-    {"pushButton", "Отталкивание", UDim2.new(0.1, 0, 0.3, 0), push},
-    {"beeButton", "Симулятор пчеловода", UDim2.new(0.1, 0, 0.5, 0), function()
-        beeSwarmMenu.Visible = not beeSwarmMenu.Visible
-    end},
-    {"closeButton", "Закрыть скрипт", UDim2.new(0.1, 0, 1, -90), function()
-        main:Destroy()
-    end},
-    {"minimizeButton", "Свернуть скрипт", UDim2.new(0.1, 0, 1, -45), function()
-        Frame.Size = UDim2.new(0, 140, 0, 40)
-        Frame.Position = UDim2.new(0.1, 0, 1, -40)
-    end}
-}
-
--- Добавляем кнопки в главное меню
-for i, buttonInfo in ipairs(buttons) do
-    createButton(buttonInfo[1], buttonInfo[2], buttonInfo[3], buttonInfo[4])
-end
-
--- Обновляем размеры и позиции, чтобы кнопки не накладывались
-Frame.Size = UDim2.new(0, 280, 0, 200 + (#buttons * 40))
-for i, buttonInfo in ipairs(buttons) do
-    local button = Frame:FindFirstChild(buttonInfo[1])
-    if button then
-        button.Position = UDim2.new(0.1, 0, 0, 30 * (i - 1) + 30)
-    end
-end
-
-            
