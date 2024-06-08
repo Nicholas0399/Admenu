@@ -7,7 +7,7 @@ main.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 main.ResetOnSpawn = false
 
 Frame.Parent = main
-Frame.Size = UDim2.new(0, 140, 0, 200)
+Frame.Size = UDim2.new(0, 280, 0, 200)
 Frame.Position = UDim2.new(0.1, 0, 0.379, 0)
 Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 Frame.BorderSizePixel = 0
@@ -15,8 +15,8 @@ Frame.Active = true
 Frame.Draggable = true
 
 title.Parent = Frame
-title.Size = UDim2.new(0, 120, 0, 25)
-title.Position = UDim2.new(0.1, 0, 0, 0)
+title.Size = UDim2.new(0, 280, 0, 25)
+title.Position = UDim2.new(0, 0, 0, 0)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.GothamBold
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -27,7 +27,7 @@ local function createButton(name, text, position, onClick)
     local button = Instance.new("TextButton")
     button.Name = name
     button.Parent = Frame
-    button.Size = UDim2.new(0, 120, 0, 30)
+    button.Size = UDim2.new(0, 140, 0, 30)
     button.Position = position
     button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     button.BorderSizePixel = 0
@@ -110,37 +110,17 @@ pushToggle.MouseButton1Click:Connect(togglePush)
 
 local beeSwarmMenu = Instance.new("Frame")
 beeSwarmMenu.Parent = main
-beeSwarmMenu.Size = UDim2.new(0, 150, 0, 300)
+beeSwarmMenu.Size = UDim2.new(0, 150, 0, 200)
 beeSwarmMenu.Position = UDim2.new(0.3, 0, 0.3, 0)
 beeSwarmMenu.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 beeSwarmMenu.Visible = false
 beeSwarmMenu.Active = true
 beeSwarmMenu.Draggable = true
 
-local beeSwarmTitle = Instance.new("TextLabel")
-beeSwarmTitle.Parent = beeSwarmMenu
-beeSwarmTitle.Size = UDim2.new(0, 130, 0, 25)
-beeSwarmTitle.Position = UDim2.new(0.1, 0, 0, 10)
-beeSwarmTitle.BackgroundTransparency = 1
-beeSwarmTitle.Font = Enum.Font.Gotham
-beeSwarmTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-beeSwarmTitle.TextSize = 14
-beeSwarmTitle.Text = "Bee Swarm Simulator"
-
-local coordsLabel = Instance.new("TextLabel")
-coordsLabel.Parent = beeSwarmMenu
-coordsLabel.Size = UDim2.new(0, 130, 0, 25)
-coordsLabel.Position = UDim2.new(0.1, 0, 0, 40)
-coordsLabel.BackgroundTransparency = 1
-coordsLabel.Font = Enum.Font.Gotham
-coordsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-coordsLabel.TextSize = 14
-coordsLabel.Text = "Координаты:"
-
 local hiveCoordLabel = Instance.new("TextLabel")
 hiveCoordLabel.Parent = beeSwarmMenu
 hiveCoordLabel.Size = UDim2.new(0, 130, 0, 25)
-hiveCoordLabel.Position = UDim2.new(0.1, 0, 70)
+hiveCoordLabel.Position = UDim2.new(0.1, 0, 40)
 hiveCoordLabel.BackgroundTransparency = 1
 hiveCoordLabel.Font = Enum.Font.Gotham
 hiveCoordLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -150,7 +130,7 @@ hiveCoordLabel.Text = "Коорд. Соты:"
 local hiveCoordBox = Instance.new("TextBox")
 hiveCoordBox.Parent = beeSwarmMenu
 hiveCoordBox.Size = UDim2.new(0, 130, 0, 25)
-hiveCoordBox.Position = UDim2.new(0.1, 0, 100)
+hiveCoordBox.Position = UDim2.new(0.1, 0, 70)
 hiveCoordBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 hiveCoordBox.Font = Enum.Font.Gotham
 hiveCoordBox.TextColor3 = Color3.fromRGB(0, 0, 0)
@@ -160,7 +140,7 @@ hiveCoordBox.Text = ""
 local farmCoordLabel = Instance.new("TextLabel")
 farmCoordLabel.Parent = beeSwarmMenu
 farmCoordLabel.Size = UDim2.new(0, 130, 0, 25)
-farmCoordLabel.Position = UDim2.new(0.1, 0, 130)
+farmCoordLabel.Position = UDim2.new(0.1, 0, 100)
 farmCoordLabel.BackgroundTransparency = 1
 farmCoordLabel.Font = Enum.Font.Gotham
 farmCoordLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -170,7 +150,7 @@ farmCoordLabel.Text = "Коорд. Фарм:"
 local farmCoordBox = Instance.new("TextBox")
 farmCoordBox.Parent = beeSwarmMenu
 farmCoordBox.Size = UDim2.new(0, 130, 0, 25)
-farmCoordBox.Position = UDim2.new(0.1, 0, 160)
+farmCoordBox.Position = UDim2.new(0.1, 0, 130)
 farmCoordBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 farmCoordBox.Font = Enum.Font.Gotham
 farmCoordBox.TextColor3 = Color3.fromRGB(0, 0, 0)
@@ -180,12 +160,20 @@ farmCoordBox.Text = ""
 local autoReturnToggle = Instance.new("TextButton")
 autoReturnToggle.Parent = beeSwarmMenu
 autoReturnToggle.Size = UDim2.new(0, 130, 0, 25)
-autoReturnToggle.Position = UDim2.new(0.1, 0, 0, 190)
+autoReturnToggle.Position = UDim2.new(0.1, 0, 160)
 autoReturnToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 autoReturnToggle.Font = Enum.Font.Gotham
 autoReturnToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 autoReturnToggle.TextSize = 14
 autoReturnToggle.Text = "Вкл/Выкл"
+
+-- Функция для разделения строки на компоненты
+function string:split(sep)
+    local sep, fields = sep or ":", {}
+    local pattern = string.format("([^%s]+)", sep)
+    self:gsub(pattern, function(c) fields[#fields + 1] = c end)
+    return fields
+end
 
 local running = false
 
@@ -250,34 +238,12 @@ end
 
 autoReturnToggle.MouseButton1Click:Connect(toggleAutoReturn)
 
--- Функция для разделения строки на компоненты
-function string:split(sep)
-    local sep, fields = sep or ":", {}
-    local pattern = string.format("([^%s]+)", sep)
-    self:gsub(pattern, function(c) fields[#fields + 1] = c end)
-    return fields
-end
-
-local function toggleAutoReturn()
-    running = not running
-    if running then
-        autoReturnToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-        spawn(autoFarmAndReturn)
-    else
-        autoReturnToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-    end
-end
-
-autoReturnToggle.MouseButton1Click:Connect(toggleAutoReturn)
-
 local buttons = {
     {"flyButton", "Полет", UDim2.new(0.1, 0, 0.1, 0), fly},
     {"pushButton", "Отталкивание", UDim2.new(0.1, 0, 0.3, 0), push},
     {"beeButton", "Симулятор пчеловода", UDim2.new(0.1, 0, 0.5, 0), function()
         beeSwarmMenu.Visible = not beeSwarmMenu.Visible
     end},
-    {"button4", "Button 4", UDim2.new(0.1, 0, 0.7, 0)},
-    {"button5", "Button 5", UDim2.new(0.1, 0, 0.9, 0)},
     {"closeButton", "Close Script", UDim2.new(0.1, 0, 1, -90), function()
         main:Destroy()
     end},
@@ -287,6 +253,7 @@ local buttons = {
     end}
 }
 
-for _, buttonInfo in ipairs(buttons) do
-    createButton(buttonInfo[1], buttonInfo[2], buttonInfo[3], buttonInfo[4])
+-- Добавляем кнопки в главное меню
+for i, buttonInfo in ipairs(buttons) do
+    createButton(buttonInfo[1], buttonInfo[2], UDim2.new(0.1 * (i-1), 0, 0.7, 0), buttonInfo[4])
 end
