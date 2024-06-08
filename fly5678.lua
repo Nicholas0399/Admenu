@@ -47,6 +47,10 @@ local function createButton(name, text, position, onClick)
     return button
 end
 
+local function togglePush()
+    pushMenu.Visible = not pushMenu.Visible
+end
+
 local pushMenu = Instance.new("Frame")
 pushMenu.Parent = main
 pushMenu.Size = UDim2.new(0, 150, 0, 200)
@@ -86,12 +90,6 @@ pushToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 pushToggle.TextSize = 14
 pushToggle.Text = "Вкл/Выкл Отталкивание"
 
-local function togglePush()
-    pushMenu.Visible = not pushMenu.Visible
-end
-
-pushToggle.MouseButton1Click:Connect(togglePush)
-
 local function push()
     local pushStrength = tonumber(pushStrengthBox.Text) or 50
     local players = game.Players:GetPlayers()
@@ -105,6 +103,8 @@ local function push()
         end
     end
 end
+
+pushToggle.MouseButton1Click:Connect(togglePush)
 
 local beeSwarmMenu = Instance.new("Frame")
 beeSwarmMenu.Parent = main
@@ -165,6 +165,7 @@ autoReturnToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 autoReturnToggle.TextSize = 14
 autoReturnToggle.Text = "Вкл/Выкл"
 
+-- Функция для разделения строки на компоненты
 function string:split(sep)
     local sep, fields = sep or ":", {}
     local pattern = string.format("([^%s]+)", sep)
@@ -235,21 +236,16 @@ end
 
 autoReturnToggle.MouseButton1Click:Connect(toggleAutoReturn)
 
--- Функция fly должна быть определена
-local function fly()
-    -- Определите поведение функции полета
-end
-
 local buttons = {
-    {"flyButton", "Полет", UDim2.new(0, 10, 0, 35), fly},
-    {"pushButton", "Отталкивание", UDim2.new(0, 10, 0, 70), push},
-    {"beeButton", "Симулятор пчеловода", UDim2.new(0, 10, 0, 105), function()
+    {"flyButton", "Полет", UDim2.new(0.1, 0, 0.1, 0), fly},
+    {"pushButton", "Отталкивание", UDim2.new(0.1, 0, 0.3, 0), push},
+    {"beeButton", "Симулятор пчеловода", UDim2.new(0.1, 0, 0.5, 0), function()
         beeSwarmMenu.Visible = not beeSwarmMenu.Visible
     end},
-    {"closeButton", "Закрыть скрипт", UDim2.new(0, 10, 0, 140), function()
+    {"closeButton", "Close Script", UDim2.new(0.1, 0, 1, -90), function()
         main:Destroy()
     end},
-    {"minimizeButton", "Свернуть скрипт", UDim2.new(0, 10, 0, 175), function()
+    {"minimizeButton", "Minimize Script", UDim2.new(0.1, 0, 1, -45), function()
         Frame.Size = UDim2.new(0, 140, 0, 40)
         Frame.Position = UDim2.new(0.1, 0, 1, -40)
     end}
