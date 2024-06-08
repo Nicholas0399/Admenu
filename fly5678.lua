@@ -250,18 +250,35 @@ end
 
 autoReturnToggle.MouseButton1Click:Connect(toggleAutoReturn)
 
-local function toggleBeeSwarmMenu()
-    beeSwarmMenu.Visible = not beeSwarmMenu.Visible
+-- Функция для разделения строки на компоненты
+function string:split(sep)
+    local sep, fields = sep or ":", {}
+    local pattern = string.format("([^%s]+)", sep)
+    self:gsub(pattern, function(c) fields[#fields + 1] = c end)
+    return fields
 end
+
+local function toggleAutoReturn()
+    running = not running
+    if running then
+        autoReturnToggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+        spawn(autoFarmAndReturn)
+    else
+        autoReturnToggle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    end
+end
+
+autoReturnToggle.MouseButton1Click:Connect(toggleAutoReturn)
 
 local buttons = {
     {"flyButton", "Полет", UDim2.new(0.1, 0, 0.1, 0), fly},
     {"pushButton", "Отталкивание", UDim2.new(0.1, 0, 0.3, 0), push},
-    {"button3", "Bee Swarm Menu", UDim2.new(0.1, 0, 0.5, 0), toggleBeeSwarmMenu},
+    {"beeButton", "Симулятор пчеловода", UDim2.new(0.1, 0, 0.5, 0), function()
+        beeSwarmMenu.Visible = not beeSwarmMenu.Visible
+    end},
     {"button4", "Button 4", UDim2.new(0.1, 0, 0.7, 0)},
     {"button5", "Button 5", UDim2.new(0.1, 0, 0.9, 0)},
     {"closeButton", "Close Script", UDim2.new(0.1, 0, 1, -90), function()
-        running = false
         main:Destroy()
     end},
     {"minimizeButton", "Minimize Script", UDim2.new(0.1, 0, 1, -45), function()
