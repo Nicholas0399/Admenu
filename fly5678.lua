@@ -254,6 +254,7 @@ local buttons = {
 }
 
 -- Добавляем кнопки в главное меню
+-- Добавляем кнопки в главное меню
 for i, buttonInfo in ipairs(buttons) do
-    createButton(buttonInfo[1], buttonInfo[2], UDim2.new(0.1 * (i-1), 0, 0.7, 0), buttonInfo[4])
+    createButton(buttonInfo[1], buttonInfo[2], buttonInfo[3], buttonInfo[4])
 end
